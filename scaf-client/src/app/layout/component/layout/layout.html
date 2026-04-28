@@ -1,0 +1,100 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">SC</div>
+      <div>
+        <strong>SCAF</strong>
+        <span>Panel administrativo</span>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Menu principal">
+      @for (item of menuItems; track item.label) {
+        @if (item.children?.length) {
+          <details class="nav-group">
+            <summary>
+              <span class="nav-icon">{{ item.icon }}</span>
+              <span>{{ item.label }}</span>
+              <span class="chevron">⌄</span>
+            </summary>
+
+            <div class="submenu">
+              @for (child of item.children ?? []; track child.label) {
+                <a href="#">
+                  <span class="nav-icon small">{{ child.icon }}</span>
+                  <span>{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          </details>
+        } @else {
+          <a class="nav-link" [class.active]="item.active" href="#">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="sidebar-card">
+      <span>Estado del sistema</span>
+      <strong>Operativo</strong>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Dashboard</p>
+        <h1>Bienvenido</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" class="icon-button" aria-label="Notificaciones">NT</button>
+        <div class="profile">
+          <div class="avatar">US</div>
+          <div>
+            <strong>Usuario</strong>
+            <span>Administrador</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="summary-grid" aria-label="Resumen">
+      <article class="summary-card primary">
+        <span>Total registros</span>
+        <strong>1,248</strong>
+        <small>+12% este mes</small>
+      </article>
+      <article class="summary-card">
+        <span>Pendientes</span>
+        <strong>32</strong>
+        <small>8 requieren revision</small>
+      </article>
+      <article class="summary-card">
+        <span>Completados</span>
+        <strong>89%</strong>
+        <small>Meta mensual</small>
+      </article>
+    </section>
+
+    <section class="content-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Contenido</p>
+          <h2>Area principal</h2>
+        </div>
+        <button type="button">Nueva accion</button>
+      </div>
+
+      <div class="placeholder">
+        <router-outlet />
+        <div class="empty-state">
+          <strong>Tu contenido va aqui</strong>
+          <span>Personaliza rutas, menus e iconos segun tus modulos.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

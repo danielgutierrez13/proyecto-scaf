@@ -1,20 +1,19 @@
 package pe.utp.service;
 
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pe.utp.repository.model.Rol;
+import pe.utp.dto.PaginateResponseDto;
+import pe.utp.dto.rol.RolRequestDto;
+import pe.utp.dto.rol.RolResponseDto;
 
 public interface RolService {
 
-    Page<Rol> listar(Pageable pageable);
+    PaginateResponseDto<RolResponseDto> listar(Pageable pageable);
 
-    Optional<Rol> buscarPorId(Long id);
+    RolResponseDto buscarPorId(Long id);
 
-    Rol crear(Rol rol);
+    RolResponseDto crear(RolRequestDto rolRequestDto);
 
-    Optional<Rol> actualizar(Long id, Rol rol);
+    RolResponseDto actualizar(Long id, RolRequestDto rolRequestDto);
 
-    boolean eliminar(Long id);
+    void eliminar(Long id);
 }

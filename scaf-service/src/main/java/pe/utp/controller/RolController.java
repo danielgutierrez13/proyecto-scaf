@@ -2,16 +2,13 @@ package pe.utp.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.utp.dto.PaginateResponseDto;
 import pe.utp.dto.rol.RolRequestDto;
 import pe.utp.dto.rol.RolResponseDto;
-import pe.utp.repository.model.Rol;
 import pe.utp.service.RolService;
 
 @RestController

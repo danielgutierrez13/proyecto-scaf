@@ -1,10 +1,25 @@
-package pe.utp.dto;
+package pe.utp.dto.usuario;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@JsonPropertyOrder({
+        "codigoUsuario",
+        "nombres",
+        "apellidos",
+        "codigoUniversitario",
+        "correoInstitucional",
+        "telefono",
+        "fotoUsuario",
+        "estado",
+        "codigoRol",
+        "nombreRol",
+        "codigoCarrera",
+        "nombreCarrera"
+})
 public class UsuarioResponseDto {
 
     private Long codigoUsuario;

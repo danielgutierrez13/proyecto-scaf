@@ -1,13 +1,13 @@
 package pe.utp.service.impl;
 
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pe.utp.dto.UsuarioRequestDto;
-import pe.utp.dto.UsuarioResponseDto;
+import pe.utp.dto.PaginateResponseDto;
+import pe.utp.dto.usuario.UsuarioRequestDto;
+import pe.utp.dto.usuario.UsuarioResponseDto;
+import pe.utp.service.mapper.UsuarioMapper;
 import pe.utp.repository.CarreraRepository;
 import pe.utp.repository.RolRepository;
 import pe.utp.repository.UsuarioRepository;
@@ -15,6 +15,8 @@ import pe.utp.repository.model.Carrera;
 import pe.utp.repository.model.Rol;
 import pe.utp.repository.model.Usuario;
 import pe.utp.service.UsuarioService;
+import pe.utp.service.exception.CodigoError;
+import pe.utp.service.exception.ScafException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,55 +25,53 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final CarreraRepository carreraRepository;
+    private final UsuarioMapper usuarioMapper;
 
     @Override
-    public Page<UsuarioResponseDto> listar(Pageable pageable) {
-        return usuarioRepository.findAll(pageable)
-                .map(this::toResponseDto);
+    public PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable) {
+        Page<UsuarioResponseDto> pagina = usuarioRepository.findAll(pageable)
+                .map(usuarioMapper::toResponseDto);
+
+        return new PaginateResponseDto<>(
+                pagina.getContent(),
+                pagina.getTotalElements(),
+                pagina.getTotalPages(),
+                pagina.getNumber()
+        );
     }
 
     @Override
-    public Optional<UsuarioResponseDto> buscarPorId(Long id) {
+    public UsuarioResponseDto buscarPorId(Long id) {
         return usuarioRepository.findById(id)
-                .map(this::toResponseDto);
+                .map(usuarioMapper::toResponseDto)
+                .orElseThrow(() -> ScafException.of(CodigoError.USUARIO_NO_ENCONTRADO));
     }
 
     @Override
     public UsuarioResponseDto crear(UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = new Usuario();
-        actualizarDatosUsuario(usuario, usuarioRequestDto);
-        return toResponseDto(usuarioRepository.save(usuario));
+        Rol rol = buscarRol(usuarioRequestDto.getCodigoRol());
+        Carrera carrera = buscarCarrera(usuarioRequestDto.getCodigoCarrera());
+        usuarioMapper.actualizarEntidad(usuario, usuarioRequestDto, rol, carrera);
+        return usuarioMapper.toResponseDto(usuarioRepository.save(usuario));
     }
 
     @Override
-    public Optional<UsuarioResponseDto> actualizar(Long id, UsuarioRequestDto usuarioRequestDto) {
-        return usuarioRepository.findById(id)
-                .map(usuarioExistente -> {
-                    actualizarDatosUsuario(usuarioExistente, usuarioRequestDto);
-                    return toResponseDto(usuarioRepository.save(usuarioExistente));
-                });
+    public UsuarioResponseDto actualizar(Long id, UsuarioRequestDto usuarioRequestDto) {
+        Usuario usuarioExistente = usuarioRepository.findById(id)
+                .orElseThrow(() -> ScafException.of(CodigoError.USUARIO_NO_ENCONTRADO));
+        Rol rol = buscarRol(usuarioRequestDto.getCodigoRol());
+        Carrera carrera = buscarCarrera(usuarioRequestDto.getCodigoCarrera());
+        usuarioMapper.actualizarEntidad(usuarioExistente, usuarioRequestDto, rol, carrera);
+        return usuarioMapper.toResponseDto(usuarioRepository.save(usuarioExistente));
     }
 
     @Override
-    public boolean eliminar(Long id) {
+    public void eliminar(Long id) {
         if (!usuarioRepository.existsById(id)) {
-            return false;
+            throw ScafException.of(CodigoError.USUARIO_NO_ENCONTRADO);
         }
         usuarioRepository.deleteById(id);
-        return true;
-    }
-
-    private void actualizarDatosUsuario(Usuario usuario, UsuarioRequestDto usuarioRequestDto) {
-        usuario.setNombres(usuarioRequestDto.getNombres());
-        usuario.setApellidos(usuarioRequestDto.getApellidos());
-        usuario.setCodigoUniversitario(usuarioRequestDto.getCodigoUniversitario());
-        usuario.setCorreoInstitucional(usuarioRequestDto.getCorreoInstitucional());
-        usuario.setPassword(usuarioRequestDto.getPassword());
-        usuario.setEstado(usuarioRequestDto.getEstado());
-        usuario.setTelefono(usuarioRequestDto.getTelefono());
-        usuario.setRol(buscarRol(usuarioRequestDto.getCodigoRol()));
-        usuario.setFotoUsuario(usuarioRequestDto.getFotoUsuario());
-        usuario.setCarrera(buscarCarrera(usuarioRequestDto.getCodigoCarrera()));
     }
 
     private Rol buscarRol(Long codigoRol) {
@@ -79,7 +79,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             return null;
         }
         return rolRepository.findById(codigoRol)
-                .orElseThrow(() -> new IllegalArgumentException("No existe el rol con codigo " + codigoRol));
+                .orElseThrow(() -> ScafException.of(CodigoError.USUARIO_ROL_NO_ENCONTRADO));
     }
 
     private Carrera buscarCarrera(Long codigoCarrera) {
@@ -87,30 +87,6 @@ public class UsuarioServiceImpl implements UsuarioService {
             return null;
         }
         return carreraRepository.findById(codigoCarrera)
-                .orElseThrow(() -> new IllegalArgumentException("No existe la carrera con codigo " + codigoCarrera));
-    }
-
-    private UsuarioResponseDto toResponseDto(Usuario usuario) {
-        UsuarioResponseDto usuarioResponseDto = new UsuarioResponseDto();
-        usuarioResponseDto.setCodigoUsuario(usuario.getCodigoUsusario());
-        usuarioResponseDto.setNombres(usuario.getNombres());
-        usuarioResponseDto.setApellidos(usuario.getApellidos());
-        usuarioResponseDto.setCodigoUniversitario(usuario.getCodigoUniversitario());
-        usuarioResponseDto.setCorreoInstitucional(usuario.getCorreoInstitucional());
-        usuarioResponseDto.setTelefono(usuario.getTelefono());
-        usuarioResponseDto.setFotoUsuario(usuario.getFotoUsuario());
-        usuarioResponseDto.setEstado(usuario.getEstado());
-
-        if (usuario.getRol() != null) {
-            usuarioResponseDto.setCodigoRol(usuario.getRol().getCodigoRol());
-            usuarioResponseDto.setNombreRol(usuario.getRol().getNombreRol());
-        }
-
-        if (usuario.getCarrera() != null) {
-            usuarioResponseDto.setCodigoCarrera(usuario.getCarrera().getCodigoCarrera());
-            usuarioResponseDto.setNombreCarrera(usuario.getCarrera().getNombreCarrera());
-        }
-
-        return usuarioResponseDto;
+                .orElseThrow(() -> ScafException.of(CodigoError.USUARIO_CARRERA_NO_ENCONTRADA));
     }
 }

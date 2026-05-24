@@ -1,0 +1,28 @@
+.carrera-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.carrera-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}

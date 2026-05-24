@@ -1,10 +1,10 @@
 package pe.utp.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pe.utp.repository.model.Carrera;
+import pe.utp.dto.PaginateResponseDto;
+import pe.utp.dto.carrera.CarreraRequestDto;
+import pe.utp.dto.carrera.CarreraResponseDto;
 import pe.utp.service.CarreraService;
 
 @RestController
@@ -27,7 +30,8 @@ public class CarreraController {
     private final CarreraService carreraService;
 
     @GetMapping
-    public Page<Carrera> listar(
+    @ResponseStatus(HttpStatus.OK)
+    public PaginateResponseDto<CarreraResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -36,29 +40,30 @@ public class CarreraController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Carrera> buscarPorId(@PathVariable Long id) {
-        return carreraService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraResponseDto buscarPorId(@PathVariable Long id) {
+        return carreraService.buscarPorId(id);
     }
 
     @PostMapping
-    public Carrera crear(@RequestBody Carrera carrera) {
-        return carreraService.crear(carrera);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CarreraResponseDto crear(
+            @Valid @RequestBody CarreraRequestDto carreraRequestDto) {
+        return carreraService.crear(carreraRequestDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Carrera> actualizar(@PathVariable Long id, @RequestBody Carrera carrera) {
-        return carreraService.actualizar(id, carrera)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraResponseDto actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CarreraRequestDto carreraRequestDto
+    ) {
+        return carreraService.actualizar(id, carreraRequestDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (!carreraService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        carreraService.eliminar(id);
     }
 }

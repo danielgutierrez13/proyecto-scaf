@@ -17,54 +17,49 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.usuario.UsuarioRequestDto;
-import pe.utp.dto.usuario.UsuarioResponseDto;
-import pe.utp.service.UsuarioService;
+import pe.utp.dto.curso.CursoRequestDto;
+import pe.utp.dto.curso.CursoResponseDto;
+import pe.utp.service.CursoService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/cursos")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioController {
+public class CursoController {
 
-    private final UsuarioService usuarioService;
+    private final CursoService cursoService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<UsuarioResponseDto> listar(
+    public PaginateResponseDto<CursoResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.listar(pageable);
+        return cursoService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public CursoResponseDto buscarPorId(@PathVariable Long id) {
+        return cursoService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponseDto crear(
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.crear(usuarioRequestDto);
+    public CursoResponseDto crear(@Valid @RequestBody CursoRequestDto cursoRequestDto) {
+        return cursoService.crear(cursoRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.actualizar(id, usuarioRequestDto);
+    public CursoResponseDto actualizar(@PathVariable Long id, @Valid @RequestBody CursoRequestDto cursoRequestDto) {
+        return cursoService.actualizar(id, cursoRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        usuarioService.eliminar(id);
+        cursoService.eliminar(id);
     }
 }

@@ -17,54 +17,58 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.usuario.UsuarioRequestDto;
-import pe.utp.dto.usuario.UsuarioResponseDto;
-import pe.utp.service.UsuarioService;
+import pe.utp.dto.cicloAcademico.CicloAcademicoRequestDto;
+import pe.utp.dto.cicloAcademico.CicloAcademicoResponseDto;
+import pe.utp.service.CicloAcademicoService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/cicloAcademico")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioController {
+public class CicloAcademicoController {
 
-    private final UsuarioService usuarioService;
+    private final CicloAcademicoService cicloAcademicoService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<UsuarioResponseDto> listar(
+    public PaginateResponseDto<CicloAcademicoResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.listar(pageable);
+        return cicloAcademicoService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public CicloAcademicoResponseDto buscarPorId(
+            @PathVariable Long id
+    ) {
+        return cicloAcademicoService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponseDto crear(
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.crear(usuarioRequestDto);
+    public CicloAcademicoResponseDto crear(
+            @Valid @RequestBody CicloAcademicoRequestDto cicloAcademicoRequestDto
+    ){
+        return cicloAcademicoService.crear(cicloAcademicoRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto actualizar(
+    public CicloAcademicoResponseDto actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
+            @Valid @RequestBody CicloAcademicoRequestDto cicloAcademicoRequestDto
     ) {
-        return usuarioService.actualizar(id, usuarioRequestDto);
+        return cicloAcademicoService.actualizar(id, cicloAcademicoRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable Long id) {
-        usuarioService.eliminar(id);
+    public void eliminar(
+            @PathVariable Long id
+    ) {
+        cicloAcademicoService.eliminar(id);
     }
 }

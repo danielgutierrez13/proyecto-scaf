@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { DashboardComponent } from './layout/component/dashboard/dashboard';
 import { Layout } from './layout/component/layout/layout';
 import { CarreraCrearComponent } from './modules/carrera/crear/carrera-crear';
 import { CarreraEditarComponent } from './modules/carrera/editar/carrera-editar';
@@ -14,6 +15,7 @@ export const routes: Routes = [
     path: 'layout',
     component: Layout,
     children: [
+      { path: '', component: DashboardComponent },
       { path: 'carreras', component: CarreraGestionComponent },
       { path: 'carreras/crear', component: CarreraCrearComponent },
       { path: 'carreras/editar/:id', component: CarreraEditarComponent },

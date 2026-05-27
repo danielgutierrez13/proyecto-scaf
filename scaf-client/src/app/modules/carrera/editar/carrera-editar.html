@@ -1,0 +1,36 @@
+<div class="carrera-container">
+  <div class="page-header">
+    <h2>Editar Carrera</h2>
+
+    <a mat-stroked-button routerLink="/layout/carreras">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </a>
+  </div>
+
+  <form [formGroup]="carreraForm" class="carrera-form" (ngSubmit)="actualizar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre de la Carrera</mat-label>
+      <input matInput formControlName="nombreCarrera" placeholder="Ingrese nombre de carrera" />
+      @if (carreraForm.get('nombreCarrera')?.hasError('required')) {
+        <mat-error>El nombre de la carrera es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripcion</mat-label>
+      <textarea matInput formControlName="descripcion" placeholder="Ingrese descripcion"></textarea>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="cargando || codigoCarrera === null">
+        <mat-icon>save</mat-icon>
+        Actualizar
+      </button>
+      <a mat-raised-button color="warn" routerLink="/layout/carreras">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>

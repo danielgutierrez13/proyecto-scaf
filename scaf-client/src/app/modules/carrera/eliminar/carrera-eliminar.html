@@ -1,0 +1,31 @@
+<div class="carrera-container">
+  <div class="page-header">
+    <h2>Eliminar Carrera</h2>
+
+    <a mat-stroked-button routerLink="/layout/carreras">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </a>
+  </div>
+
+  @if (carrera) {
+    <div class="delete-panel">
+      <p>Desea eliminar la carrera?</p>
+      <strong>{{ carrera.nombreCarrera }}</strong>
+      <span>{{ carrera.descripcion }}</span>
+
+      <div class="form-actions">
+        <button mat-raised-button color="warn" type="button" [disabled]="cargando" (click)="eliminar()">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+        <a mat-raised-button routerLink="/layout/carreras">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </a>
+      </div>
+    </div>
+  } @else {
+    <p class="empty-message">Cargando carrera...</p>
+  }
+</div>

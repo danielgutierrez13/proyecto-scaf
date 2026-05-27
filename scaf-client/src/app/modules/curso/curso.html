@@ -1,0 +1,78 @@
+<div class="curso-container">
+  <div class="page-header">
+    <h2>Gestion de Cursos</h2>
+
+    <a mat-raised-button color="primary" routerLink="/layout/cursos/crear">
+      <mat-icon>add</mat-icon>
+      Nuevo Curso
+    </a>
+  </div>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="codigoCurso">
+        <th mat-header-cell *matHeaderCellDef>Codigo</th>
+        <td mat-cell *matCellDef="let curso">{{ curso.codigoCurso }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let curso">{{ curso.nombre }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="creditos">
+        <th mat-header-cell *matHeaderCellDef>Creditos</th>
+        <td mat-cell *matCellDef="let curso">{{ curso.creditos }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ciclo">
+        <th mat-header-cell *matHeaderCellDef>Ciclo</th>
+        <td mat-cell *matCellDef="let curso">{{ curso.ciclo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="modalidad">
+        <th mat-header-cell *matHeaderCellDef>Modalidad</th>
+        <td mat-cell *matCellDef="let curso">{{ curso.modalidad }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let curso">
+          <a
+            mat-icon-button
+            color="primary"
+            aria-label="Editar curso"
+            [routerLink]="['/layout/cursos/editar', curso.codigoCurso]">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            aria-label="Eliminar curso"
+            (click)="eliminar(curso)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row empty-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No hay cursos registrados.
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="cambiarPagina($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

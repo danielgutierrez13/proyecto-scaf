@@ -10,6 +10,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
+    path: 'layout/cursos/editar/:id',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'layout/cursos/eliminar/:id',
+    renderMode: RenderMode.Client
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender
   }

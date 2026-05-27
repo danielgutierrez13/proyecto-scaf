@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 
 interface MenuItem {
   label: string;
@@ -10,7 +9,6 @@ interface MenuItem {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet],
   templateUrl: './layout.html',
   styleUrl: './layout.scss',
 })

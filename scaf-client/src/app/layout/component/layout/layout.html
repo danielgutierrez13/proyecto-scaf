@@ -15,12 +15,12 @@
             <summary>
               <span class="nav-icon">{{ item.icon }}</span>
               <span>{{ item.label }}</span>
-              <span class="chevron">⌄</span>
+              <span class="chevron">v</span>
             </summary>
 
             <div class="submenu">
               @for (child of item.children ?? []; track child.label) {
-                <a href="#">
+                <a [routerLink]="child.route ?? []" routerLinkActive="active">
                   <span class="nav-icon small">{{ child.icon }}</span>
                   <span>{{ child.label }}</span>
                 </a>
@@ -28,7 +28,7 @@
             </div>
           </details>
         } @else {
-          <a class="nav-link" [class.active]="item.active" href="#">
+          <a class="nav-link" [routerLink]="item.route ?? []" routerLinkActive="active">
             <span class="nav-icon">{{ item.icon }}</span>
             <span>{{ item.label }}</span>
           </a>
@@ -60,5 +60,7 @@
         </div>
       </div>
     </header>
+
+    <router-outlet></router-outlet>
   </main>
 </div>

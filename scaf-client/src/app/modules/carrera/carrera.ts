@@ -1,18 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
-export interface Carrera {
-  idCarrera?: number;
-  nombre: string;
-  descripcion: string;
-}
+import { CarreraRequest, CarreraResponse } from '../../core/models/carrera.model';
+import { CarreraService } from '../../core/services/carrera.service';
 
 @Component({
   selector: 'app-carrera-gestion',
@@ -30,18 +27,23 @@ export interface Carrera {
   templateUrl: './carrera.html',
   styleUrls: ['./carrera.scss']
 })
-export class CarreraGestionComponent implements OnInit, AfterViewInit {
-
+export class CarreraGestionComponent implements OnInit {
   carreraForm: FormGroup;
-  displayedColumns: string[] = ['idCarrera', 'nombre', 'descripcion', 'acciones'];
-  dataSource = new MatTableDataSource<Carrera>();
+  displayedColumns: string[] = ['codigoCarrera', 'nombreCarrera', 'descripcion', 'acciones'];
+  dataSource = new MatTableDataSource<CarreraResponse>();
+  codigoCarreraSeleccionado: number | null = null;
+  totalItems = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  cargando = false;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly carreraService: CarreraService,
+    @Inject(PLATFORM_ID) private readonly platformId: object
+  ) {
     this.carreraForm = this.fb.group({
-      idCarrera: [null],
-      nombre: ['', Validators.required],
+      nombreCarrera: ['', Validators.required],
       descripcion: ['']
     });
   }
@@ -50,43 +52,97 @@ export class CarreraGestionComponent implements OnInit, AfterViewInit {
     this.cargarCarreras();
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+  cargarCarreras(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.cargando = true;
+    this.carreraService.listar(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.lista;
+        this.totalItems = response.totalItems;
+        this.pageIndex = response.numeroPagina;
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al listar carreras', error);
+        this.cargando = false;
+      }
+    });
   }
 
-  cargarCarreras() {
-    // Datos simulados para la tabla
-    this.dataSource.data = [
-      { idCarrera: 1, nombre: 'Ingeniería de Sistemas', descripcion: 'Software y tecnología' },
-      { idCarrera: 2, nombre: 'Administración', descripcion: 'Gestión y negocios' }
-    ];
+  cambiarPagina(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.cargarCarreras();
   }
 
-  agregar() {
-    const nueva: Carrera = this.carreraForm.value;
-    nueva.idCarrera = this.dataSource.data.length + 1; // simulación ID
-    this.dataSource.data = [...this.dataSource.data, nueva];
-    this.limpiar();
+  agregar(): void {
+    if (this.carreraForm.invalid) {
+      this.carreraForm.markAllAsTouched();
+      return;
+    }
+
+    this.carreraService.crear(this.obtenerCarreraRequest()).subscribe({
+      next: () => {
+        this.cargarCarreras();
+        this.limpiar();
+      },
+      error: (error) => console.error('Error al crear carrera', error)
+    });
   }
 
-  actualizar() {
-    const carreraEditada: Carrera = this.carreraForm.value;
-    this.dataSource.data = this.dataSource.data.map(c =>
-      c.idCarrera === carreraEditada.idCarrera ? carreraEditada : c
-    );
-    this.limpiar();
+  actualizar(): void {
+    if (this.carreraForm.invalid || this.codigoCarreraSeleccionado === null) {
+      this.carreraForm.markAllAsTouched();
+      return;
+    }
+
+    this.carreraService.actualizar(this.codigoCarreraSeleccionado, this.obtenerCarreraRequest()).subscribe({
+      next: () => {
+        this.cargarCarreras();
+        this.limpiar();
+      },
+      error: (error) => console.error('Error al actualizar carrera', error)
+    });
   }
 
-  eliminar(carrera?: Carrera) {
-    if (!carrera) return;
-    this.dataSource.data = this.dataSource.data.filter(c => c.idCarrera !== carrera.idCarrera);
+  eliminar(carrera: CarreraResponse): void {
+    const confirmado = confirm(`Desea eliminar la carrera "${carrera.nombreCarrera}"?`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.carreraService.eliminar(carrera.codigoCarrera).subscribe({
+      next: () => this.cargarCarreras(),
+      error: (error) => console.error('Error al eliminar carrera', error)
+    });
   }
 
-  editar(carrera: Carrera) {
-    this.carreraForm.patchValue(carrera);
+  editar(carrera: CarreraResponse): void {
+    this.carreraService.buscarPorId(carrera.codigoCarrera).subscribe({
+      next: (response) => {
+        this.codigoCarreraSeleccionado = response.codigoCarrera;
+        this.carreraForm.patchValue({
+          nombreCarrera: response.nombreCarrera,
+          descripcion: response.descripcion
+        });
+      },
+      error: (error) => console.error('Error al buscar carrera', error)
+    });
   }
 
-  limpiar() {
+  limpiar(): void {
+    this.codigoCarreraSeleccionado = null;
     this.carreraForm.reset();
+  }
+
+  private obtenerCarreraRequest(): CarreraRequest {
+    const formValue = this.carreraForm.getRawValue() as CarreraRequest;
+    return {
+      nombreCarrera: formValue.nombreCarrera,
+      descripcion: formValue.descripcion ?? ''
+    };
   }
 }

@@ -1,16 +1,22 @@
 .carrera-container {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
   border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 14px 34px rgba(30, 56, 99, 0.08);
+
+  h2 {
+    margin: 0 0 20px;
+    color: #172033;
+  }
 }
 
 .carrera-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(260px, 2fr);
+  gap: 16px;
+  margin-bottom: 24px;
 
   mat-form-field {
     width: 100%;
@@ -18,11 +24,41 @@
 
   .form-actions {
     display: flex;
-    gap: 10px;
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    button {
+      min-width: 130px;
+    }
   }
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
-  margin-top: 20px;
+}
+
+.empty-row td {
+  padding: 28px;
+  text-align: center;
+  color: #687892;
+}
+
+mat-paginator {
+  border-top: 1px solid rgba(87, 111, 148, 0.12);
+}
+
+@media (max-width: 760px) {
+  .carrera-container {
+    padding: 18px;
+  }
+
+  .carrera-form {
+    grid-template-columns: 1fr;
+  }
 }

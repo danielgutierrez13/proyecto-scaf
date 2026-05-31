@@ -29,8 +29,8 @@ export class Layout {
       label: 'Gestion',
       icon: 'GE',
       children: [
-        { label: 'Cursos', icon: 'S1' },
-        { label: 'Asignacion', icon: 'S2' },
+        { label: 'Cursos', icon: 'S1', route: '/layout/cursos' },
+        { label: 'Asignacion', icon: 'S2', route: '/layout/asignaciones' },
         { label: 'Horarios', icon: 'S3' },
         { label: 'Ciclo Academico', icon: 'S2' },
         { label: 'Carreras', icon: 'S4', route: '/layout/carreras' },

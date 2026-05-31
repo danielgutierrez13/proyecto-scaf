@@ -1,0 +1,65 @@
+<div class="curso-container">
+  <div class="page-header">
+    <h2>Crear Curso</h2>
+
+    <a mat-stroked-button routerLink="/layout/cursos">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </a>
+  </div>
+
+  <form [formGroup]="cursoForm" class="curso-form" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" placeholder="Ingrese nombre del curso" />
+      @if (cursoForm.get('nombre')?.hasError('required')) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Creditos</mat-label>
+      <input matInput type="number" formControlName="creditos" placeholder="Ingrese creditos" />
+      @if (cursoForm.get('creditos')?.hasError('required')) {
+        <mat-error>Los creditos son obligatorios</mat-error>
+      }
+      @if (cursoForm.get('creditos')?.hasError('min')) {
+        <mat-error>Los creditos deben ser mayores a 0</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ciclo</mat-label>
+      <input matInput type="number" formControlName="ciclo" placeholder="Ingrese ciclo" />
+      @if (cursoForm.get('ciclo')?.hasError('required')) {
+        <mat-error>El ciclo es obligatorio</mat-error>
+      }
+      @if (cursoForm.get('ciclo')?.hasError('min')) {
+        <mat-error>El ciclo debe ser mayor a 0</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modalidad</mat-label>
+      <mat-select formControlName="modalidad">
+        @for (modalidad of modalidades; track modalidad) {
+          <mat-option [value]="modalidad">{{ modalidad }}</mat-option>
+        }
+      </mat-select>
+      @if (cursoForm.get('modalidad')?.hasError('required')) {
+        <mat-error>La modalidad es obligatoria</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="cargando">
+        <mat-icon>save</mat-icon>
+        Guardar
+      </button>
+      <button mat-raised-button color="warn" type="button" (click)="limpiar()">
+        <mat-icon>clear</mat-icon>
+        Limpiar
+      </button>
+    </div>
+  </form>
+</div>

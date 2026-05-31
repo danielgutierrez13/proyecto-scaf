@@ -1,0 +1,31 @@
+<div class="curso-container">
+  <div class="page-header">
+    <h2>Eliminar Curso</h2>
+
+    <a mat-stroked-button routerLink="/layout/cursos">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </a>
+  </div>
+
+  @if (curso) {
+    <div class="delete-panel">
+      <p>Desea eliminar el curso?</p>
+      <strong>{{ curso.nombre }}</strong>
+      <span>Creditos: {{ curso.creditos }} | Ciclo: {{ curso.ciclo }} | Modalidad: {{ curso.modalidad }}</span>
+
+      <div class="form-actions">
+        <button mat-raised-button color="warn" type="button" [disabled]="cargando" (click)="eliminar()">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+        <a mat-raised-button routerLink="/layout/cursos">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </a>
+      </div>
+    </div>
+  } @else {
+    <p class="empty-message">Cargando curso...</p>
+  }
+</div>

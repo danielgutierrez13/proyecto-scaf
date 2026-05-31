@@ -1,4 +1,4 @@
-.carrera-container {
+.curso-container {
   width: 100%;
   box-sizing: border-box;
   padding: 24px;
@@ -20,9 +20,9 @@
   margin-bottom: 20px;
 }
 
-.carrera-form {
+.curso-form {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(260px, 2fr);
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 
@@ -36,7 +36,8 @@
     flex-wrap: wrap;
     gap: 12px;
 
-    button {
+    button,
+    a {
       min-width: 130px;
     }
   }
@@ -62,7 +63,7 @@ mat-paginator {
 }
 
 @media (max-width: 760px) {
-  .carrera-container {
+  .curso-container {
     padding: 18px;
   }
 
@@ -71,7 +72,7 @@ mat-paginator {
     flex-direction: column;
   }
 
-  .carrera-form {
+  .curso-form {
     grid-template-columns: 1fr;
   }
 }

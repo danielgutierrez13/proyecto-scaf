@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 interface MenuItem {
   label: string;
   icon: string;
-  active?: boolean;
+  route?: string;
   children?: MenuItem[];
 }
 
 @Component({
   selector: 'app-layout',
+  imports: [RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './layout.html',
   styleUrl: './layout.scss',
 })
 export class Layout {
   protected readonly menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'IN', active: true },
+    { label: 'Dashboard', icon: 'IN', route: '/layout' },
     {
       label: 'Usuarios',
       icon: 'US',
@@ -28,10 +30,10 @@ export class Layout {
       icon: 'GE',
       children: [
         { label: 'Cursos', icon: 'S1' },
-        { label: 'Asiganción', icon: 'S2' },
+        { label: 'Asignacion', icon: 'S2' },
         { label: 'Horarios', icon: 'S3' },
-        { label: 'Ciclo Académico', icon: 'S2' },
-        { label: 'Carreras', icon: 'S4' },
+        { label: 'Ciclo Academico', icon: 'S2' },
+        { label: 'Carreras', icon: 'S4', route: '/layout/carreras' },
         { label: 'Inscripciones', icon: 'S5' },
         { label: 'Asistencia', icon: 'S6' },
       ],

@@ -121,7 +121,8 @@
 .nav-link:hover,
 .nav-link.active,
 .nav-group summary:hover,
-.submenu a:hover {
+.submenu a:hover,
+.submenu a.active {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }

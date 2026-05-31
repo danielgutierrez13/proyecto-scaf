@@ -108,6 +108,10 @@
   color: #e74c3c;
   display: none;
   margin-top: -4px;
+
+  &.visible {
+    display: block;
+  }
 }
 
 .form-checkbox {

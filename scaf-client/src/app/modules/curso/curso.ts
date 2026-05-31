@@ -6,11 +6,11 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
-import { CarreraResponse } from '../../core/models/carrera.model';
-import { CarreraService } from '../../core/services/carrera.service';
+import { CursoResponse } from '../../core/models/curso.model';
+import { CursoService } from '../../core/services/curso.service';
 
 @Component({
-  selector: 'app-carrera-gestion',
+  selector: 'app-curso',
   standalone: true,
   imports: [
     CommonModule,
@@ -20,33 +20,33 @@ import { CarreraService } from '../../core/services/carrera.service';
     MatTableModule,
     RouterLink,
   ],
-  templateUrl: './carrera.html',
-  styleUrls: ['./carrera.scss']
+  templateUrl: './curso.html',
+  styleUrl: './curso.scss',
 })
-export class CarreraGestionComponent implements OnInit {
-  displayedColumns: string[] = ['codigoCarrera', 'nombreCarrera', 'descripcion', 'acciones'];
-  dataSource = new MatTableDataSource<CarreraResponse>();
+export class CursoComponent implements OnInit {
+  displayedColumns: string[] = ['codigoCurso', 'nombre', 'creditos', 'ciclo', 'modalidad', 'acciones'];
+  dataSource = new MatTableDataSource<CursoResponse>();
   totalItems = 0;
   pageSize = 10;
   pageIndex = 0;
   cargando = false;
 
   constructor(
-    private readonly carreraService: CarreraService,
+    private readonly cursoService: CursoService,
     @Inject(PLATFORM_ID) private readonly platformId: object
   ) {}
 
   ngOnInit(): void {
-    this.cargarCarreras();
+    this.cargarCursos();
   }
 
-  cargarCarreras(): void {
+  cargarCursos(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
     this.cargando = true;
-    this.carreraService.listar(this.pageIndex, this.pageSize).subscribe({
+    this.cursoService.listar(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
         this.dataSource.data = response.lista;
         this.totalItems = response.totalItems;
@@ -54,7 +54,7 @@ export class CarreraGestionComponent implements OnInit {
         this.cargando = false;
       },
       error: (error) => {
-        console.error('Error al listar carreras', error);
+        console.error('Error al listar cursos', error);
         this.cargando = false;
       }
     });
@@ -63,6 +63,22 @@ export class CarreraGestionComponent implements OnInit {
   cambiarPagina(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.cargarCarreras();
+    this.cargarCursos();
+  }
+
+  eliminar(curso: CursoResponse): void {
+    const confirmado = confirm(`Desea eliminar el curso "${curso.nombre}"?`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.cargando = true;
+    this.cursoService.eliminar(curso.codigoCurso).subscribe({
+      next: () => this.cargarCursos(),
+      error: (error) => {
+        console.error('Error al eliminar curso', error);
+        this.cargando = false;
+      }
+    });
   }
 }

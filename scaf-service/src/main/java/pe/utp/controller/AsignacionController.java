@@ -17,53 +17,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.carrera.CarreraRequestDto;
-import pe.utp.dto.carrera.CarreraResponseDto;
-import pe.utp.service.CarreraService;
+import pe.utp.dto.asignacion.AsignacionRequestDto;
+import pe.utp.dto.asignacion.AsignacionResponseDto;
+import pe.utp.service.AsignacionService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/carreras")
+@RequestMapping("/api/asignaciones")
 @CrossOrigin(origins = "http://localhost:4200")
-public class CarreraController {
+public class AsignacionController {
 
-    private final CarreraService carreraService;
+    private final AsignacionService asignacionService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<CarreraResponseDto> listar(
+    public PaginateResponseDto<AsignacionResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return carreraService.listar(pageable);
+        return asignacionService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CarreraResponseDto buscarPorId(@PathVariable Long id) {
-        return carreraService.buscarPorId(id);
+    public AsignacionResponseDto buscarPorId(@PathVariable Long id) {
+        return asignacionService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CarreraResponseDto crear(
-            @Valid @RequestBody CarreraRequestDto carreraRequestDto) {
-        return carreraService.crear(carreraRequestDto);
+    public AsignacionResponseDto crear(@Valid @RequestBody AsignacionRequestDto asignacionRequestDto) {
+        return asignacionService.crear(asignacionRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CarreraResponseDto actualizar(
+    public AsignacionResponseDto actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody CarreraRequestDto carreraRequestDto
+            @Valid @RequestBody AsignacionRequestDto asignacionRequestDto
     ) {
-        return carreraService.actualizar(id, carreraRequestDto);
+        return asignacionService.actualizar(id, asignacionRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        carreraService.eliminar(id);
+        asignacionService.eliminar(id);
     }
 }

@@ -17,53 +17,58 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.carrera.CarreraRequestDto;
-import pe.utp.dto.carrera.CarreraResponseDto;
-import pe.utp.service.CarreraService;
+import pe.utp.dto.cicloAcademico.CicloAcademicoRequestDto;
+import pe.utp.dto.cicloAcademico.CicloAcademicoResponseDto;
+import pe.utp.service.CicloAcademicoService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/carreras")
+@RequestMapping("/api/cicloAcademico")
 @CrossOrigin(origins = "http://localhost:4200")
-public class CarreraController {
+public class CicloAcademicoController {
 
-    private final CarreraService carreraService;
+    private final CicloAcademicoService cicloAcademicoService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<CarreraResponseDto> listar(
+    public PaginateResponseDto<CicloAcademicoResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return carreraService.listar(pageable);
+        return cicloAcademicoService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CarreraResponseDto buscarPorId(@PathVariable Long id) {
-        return carreraService.buscarPorId(id);
+    public CicloAcademicoResponseDto buscarPorId(
+            @PathVariable Long id
+    ) {
+        return cicloAcademicoService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CarreraResponseDto crear(
-            @Valid @RequestBody CarreraRequestDto carreraRequestDto) {
-        return carreraService.crear(carreraRequestDto);
+    public CicloAcademicoResponseDto crear(
+            @Valid @RequestBody CicloAcademicoRequestDto cicloAcademicoRequestDto
+    ){
+        return cicloAcademicoService.crear(cicloAcademicoRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CarreraResponseDto actualizar(
+    public CicloAcademicoResponseDto actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody CarreraRequestDto carreraRequestDto
+            @Valid @RequestBody CicloAcademicoRequestDto cicloAcademicoRequestDto
     ) {
-        return carreraService.actualizar(id, carreraRequestDto);
+        return cicloAcademicoService.actualizar(id, cicloAcademicoRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable Long id) {
-        carreraService.eliminar(id);
+    public void eliminar(
+            @PathVariable Long id
+    ) {
+        cicloAcademicoService.eliminar(id);
     }
 }

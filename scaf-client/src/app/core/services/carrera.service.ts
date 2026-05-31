@@ -1,17 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { CarreraRequest, CarreraResponse } from '../models/carrera.model';
 import { PaginateResponse } from '../models/paginate-response.model';
-
-interface SpringPageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -22,19 +14,12 @@ export class CarreraService {
   constructor(private readonly http: HttpClient) {}
 
   listar(page: number, size: number): Observable<PaginateResponse<CarreraResponse>> {
-    return this.http.get<SpringPageResponse<CarreraResponse>>(this.apiUrl, {
+    return this.http.get<PaginateResponse<CarreraResponse>>(this.apiUrl, {
       params: {
         page,
         size
       }
-    }).pipe(
-      map((response) => ({
-        lista: response.content,
-        totalItems: response.totalElements,
-        totalPaginas: response.totalPages,
-        numeroPagina: response.number
-      }))
-    );
+    });
   }
 
   buscarPorId(id: number): Observable<CarreraResponse> {

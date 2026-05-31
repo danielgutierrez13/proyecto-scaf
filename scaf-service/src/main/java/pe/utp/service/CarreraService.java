@@ -1,20 +1,19 @@
 package pe.utp.service;
 
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pe.utp.repository.model.Carrera;
+import pe.utp.dto.PaginateResponseDto;
+import pe.utp.dto.carrera.CarreraRequestDto;
+import pe.utp.dto.carrera.CarreraResponseDto;
 
 public interface CarreraService {
 
-    Page<Carrera> listar(Pageable pageable);
+    PaginateResponseDto<CarreraResponseDto> listar(Pageable pageable);
 
-    Optional<Carrera> buscarPorId(Long id);
+    CarreraResponseDto buscarPorId(Long id);
 
-    Carrera crear(Carrera carrera);
+    CarreraResponseDto crear(CarreraRequestDto carreraRequestDto);
 
-    Optional<Carrera> actualizar(Long id, Carrera carrera);
+    CarreraResponseDto actualizar(Long id, CarreraRequestDto carreraRequestDto);
 
-    boolean eliminar(Long id);
+    void eliminar(Long id);
 }

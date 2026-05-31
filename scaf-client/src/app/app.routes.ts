@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { Layout } from './layout/component/layout/layout';
+import { AsignacionComponent } from './modules/asignacion/asignacion';
 import { CarreraCrearComponent } from './modules/carrera/crear/carrera-crear';
 import { CarreraEditarComponent } from './modules/carrera/editar/carrera-editar';
 import { CarreraEliminarComponent } from './modules/carrera/eliminar/carrera-eliminar';
@@ -25,7 +26,8 @@ export const routes: Routes = [
       { path: 'cursos', component: CursoComponent },
       { path: 'cursos/crear', component: CursoCrearComponent },
       { path: 'cursos/editar/:id', component: CursoEditarComponent },
-      { path: 'cursos/eliminar/:id', component: CursoEliminarComponent }
+      { path: 'cursos/eliminar/:id', component: CursoEliminarComponent },
+      { path: 'asignaciones', component: AsignacionComponent }
     ]
   },
   { path: '**', redirectTo: '/login' }

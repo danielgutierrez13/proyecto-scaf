@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { Layout } from './layout/component/layout/layout';
+import { AsignacionComponent } from './modules/asignacion/asignacion';
 import { CarreraCrearComponent } from './modules/carrera/crear/carrera-crear';
 import { CarreraEditarComponent } from './modules/carrera/editar/carrera-editar';
 import { CarreraEliminarComponent } from './modules/carrera/eliminar/carrera-eliminar';
@@ -9,6 +10,7 @@ import { CursoCrearComponent } from './modules/curso/crear/curso-crear';
 import { CursoEditarComponent } from './modules/curso/editar/curso-editar';
 import { CursoEliminarComponent } from './modules/curso/eliminar/curso-eliminar';
 import { CursoComponent } from './modules/curso/curso';
+import { InscripcionComponent } from './modules/inscripcion/inscripcion';
 import { Login } from './security/component/login/login';
 
 export const routes: Routes = [
@@ -25,7 +27,9 @@ export const routes: Routes = [
       { path: 'cursos', component: CursoComponent },
       { path: 'cursos/crear', component: CursoCrearComponent },
       { path: 'cursos/editar/:id', component: CursoEditarComponent },
-      { path: 'cursos/eliminar/:id', component: CursoEliminarComponent }
+      { path: 'cursos/eliminar/:id', component: CursoEliminarComponent },
+      { path: 'asignaciones', component: AsignacionComponent },
+      { path: 'inscripciones', component: InscripcionComponent }
     ]
   },
   { path: '**', redirectTo: '/login' }

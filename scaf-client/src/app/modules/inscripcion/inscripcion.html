@@ -1,0 +1,104 @@
+<div class="inscripcion-container">
+  <div class="page-header">
+    <div>
+      <h2>Gestion de Inscripciones</h2>
+      <p>Inscribe estudiantes en asignaciones disponibles.</p>
+    </div>
+  </div>
+
+  <form [formGroup]="inscripcionForm" class="inscripcion-form" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Estudiante</mat-label>
+      <mat-select formControlName="codigoEstudiante" [disabled]="cargandoCatalogos">
+        @for (estudiante of estudiantes; track estudiante.codigoUsuario) {
+          <mat-option [value]="estudiante.codigoUsuario">{{ etiquetaEstudiante(estudiante) }}</mat-option>
+        }
+      </mat-select>
+      @if (inscripcionForm.get('codigoEstudiante')?.hasError('required')) {
+        <mat-error>El estudiante es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Asignacion</mat-label>
+      <mat-select formControlName="codigoAsignacion" [disabled]="cargandoCatalogos">
+        @for (asignacion of asignaciones; track asignacion.codigoAsignacion) {
+          <mat-option [value]="asignacion.codigoAsignacion">{{ etiquetaAsignacion(asignacion) }}</mat-option>
+        }
+      </mat-select>
+      @if (inscripcionForm.get('codigoAsignacion')?.hasError('required')) {
+        <mat-error>La asignacion es obligatoria</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="cargando || cargandoCatalogos">
+        <mat-icon>save</mat-icon>
+        {{ codigoInscripcionEditando === null ? 'Guardar' : 'Actualizar' }}
+      </button>
+      <button mat-stroked-button type="button" (click)="limpiarFormulario()" [disabled]="cargando">
+        <mat-icon>clear</mat-icon>
+        Limpiar
+      </button>
+    </div>
+  </form>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="codigoInscripcion">
+        <th mat-header-cell *matHeaderCellDef>Codigo</th>
+        <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.codigoInscripcion }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombreEstudiante">
+        <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+        <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.nombreEstudiante || 'Sin estudiante' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombreCurso">
+        <th mat-header-cell *matHeaderCellDef>Curso</th>
+        <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.nombreCurso || 'Sin curso' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let inscripcion">
+          <button
+            mat-icon-button
+            color="primary"
+            type="button"
+            aria-label="Editar inscripcion"
+            (click)="editar(inscripcion)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            aria-label="Eliminar inscripcion"
+            (click)="eliminar(inscripcion)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row empty-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No hay inscripciones registradas.
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="cambiarPagina($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

@@ -34,7 +34,7 @@ export class Layout {
         { label: 'Horarios', icon: 'S3' },
         { label: 'Ciclo Academico', icon: 'S2' },
         { label: 'Carreras', icon: 'S4', route: '/layout/carreras' },
-        { label: 'Inscripciones', icon: 'S5' },
+        { label: 'Inscripciones', icon: 'S5', route: '/layout/inscripciones' },
         { label: 'Asistencia', icon: 'S6' },
       ],
     },

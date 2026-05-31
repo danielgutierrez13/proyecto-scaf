@@ -1,21 +1,19 @@
 package pe.utp.service;
 
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pe.utp.dto.UsuarioRequestDto;
-import pe.utp.dto.UsuarioResponseDto;
+import pe.utp.dto.PaginateResponseDto;
+import pe.utp.dto.usuario.UsuarioRequestDto;
+import pe.utp.dto.usuario.UsuarioResponseDto;
 
 public interface UsuarioService {
 
-    Page<UsuarioResponseDto> listar(Pageable pageable);
+    PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable);
 
-    Optional<UsuarioResponseDto> buscarPorId(Long id);
+    UsuarioResponseDto buscarPorId(Long id);
 
     UsuarioResponseDto crear(UsuarioRequestDto usuarioRequestDto);
 
-    Optional<UsuarioResponseDto> actualizar(Long id, UsuarioRequestDto usuarioRequestDto);
+    UsuarioResponseDto actualizar(Long id, UsuarioRequestDto usuarioRequestDto);
 
-    boolean eliminar(Long id);
+    void eliminar(Long id);
 }

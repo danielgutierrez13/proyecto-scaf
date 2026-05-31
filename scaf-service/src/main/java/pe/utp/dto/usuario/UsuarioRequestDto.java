@@ -1,10 +1,14 @@
-package pe.utp.dto;
+package pe.utp.dto.usuario;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsuarioRequestDto {
 
     private String nombres;

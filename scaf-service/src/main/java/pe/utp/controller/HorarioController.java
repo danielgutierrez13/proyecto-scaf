@@ -17,54 +17,49 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.usuario.UsuarioRequestDto;
-import pe.utp.dto.usuario.UsuarioResponseDto;
-import pe.utp.service.UsuarioService;
+import pe.utp.dto.horario.HorarioRequestDto;
+import pe.utp.dto.horario.HorarioResponseDto;
+import pe.utp.service.HorarioService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/horarios")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioController {
+public class HorarioController {
 
-    private final UsuarioService usuarioService;
+    private final HorarioService horarioService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<UsuarioResponseDto> listar(
+    public PaginateResponseDto<HorarioResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.listar(pageable);
+        return horarioService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public HorarioResponseDto buscarPorId(@PathVariable Long id) {
+        return horarioService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponseDto crear(
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.crear(usuarioRequestDto);
+    public HorarioResponseDto crear(@Valid @RequestBody HorarioRequestDto horarioRequestDto) {
+        return horarioService.crear(horarioRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.actualizar(id, usuarioRequestDto);
+    public HorarioResponseDto actualizar(@PathVariable Long id, @Valid @RequestBody HorarioRequestDto horarioRequestDto) {
+        return horarioService.actualizar(id, horarioRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        usuarioService.eliminar(id);
+        horarioService.eliminar(id);
     }
 }

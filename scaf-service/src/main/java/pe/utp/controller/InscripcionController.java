@@ -17,54 +17,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.usuario.UsuarioRequestDto;
-import pe.utp.dto.usuario.UsuarioResponseDto;
-import pe.utp.service.UsuarioService;
+import pe.utp.dto.inscripcion.InscripcionRequestDto;
+import pe.utp.dto.inscripcion.InscripcionResponseDto;
+import pe.utp.service.InscripcionService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/inscripciones")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioController {
+public class InscripcionController {
 
-    private final UsuarioService usuarioService;
+    private final InscripcionService inscripcionService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<UsuarioResponseDto> listar(
+    public PaginateResponseDto<InscripcionResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.listar(pageable);
+        return inscripcionService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public InscripcionResponseDto buscarPorId(@PathVariable Long id) {
+        return inscripcionService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponseDto crear(
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.crear(usuarioRequestDto);
+    public InscripcionResponseDto crear(@Valid @RequestBody InscripcionRequestDto inscripcionRequestDto) {
+        return inscripcionService.crear(inscripcionRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto actualizar(
+    public InscripcionResponseDto actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
+            @Valid @RequestBody InscripcionRequestDto inscripcionRequestDto
     ) {
-        return usuarioService.actualizar(id, usuarioRequestDto);
+        return inscripcionService.actualizar(id, inscripcionRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        usuarioService.eliminar(id);
+        inscripcionService.eliminar(id);
     }
 }

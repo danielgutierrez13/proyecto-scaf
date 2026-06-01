@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { RolService } from '../../service/rol.service';
 
@@ -24,22 +25,24 @@ export class RolEditarComponent implements OnInit {
     descripcion: ['', [Validators.required, Validators.maxLength(255)]],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected rolId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de rol no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de rol no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.rolId = id;
-    this.cargarRol(id);
+      this.rolId = id;
+      this.cargarRol(id);
+    });
   }
 
   protected guardar(): void {
@@ -52,30 +55,33 @@ export class RolEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.rolService.actualizar(this.rolId, this.rolForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/roles']),
       error: () => {
-        this.error = 'No se pudo actualizar el rol.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar el rol.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarRol(id: number): void {
-    this.rolService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.rolService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (rol) => {
         this.rolForm.patchValue({
-          nombreRol: rol.nombreRol,
-          descripcion: rol.descripcion,
+          nombreRol: rol.nombreRol ?? '',
+          descripcion: rol.descripcion ?? '',
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar el rol solicitado.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar el rol solicitado.');
       },
     });
   }

@@ -1,11 +1,11 @@
 <section class="form-panel">
   <h2>Actualizar rol</h2>
 
-  @if (error) {
-    <div class="alert" role="alert">{{ error }}</div>
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
   }
 
-  @if (cargando) {
+  @if (cargando()) {
     <div class="empty-state">
       <strong>Cargando rol</strong>
       <span>Consultando informacion registrada.</span>
@@ -30,8 +30,8 @@
 
       <div class="form-actions">
         <a mat-stroked-button routerLink="/layout/roles">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="guardando">
-          {{ guardando ? 'Guardando...' : 'Actualizar rol' }}
+        <button mat-flat-button type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Actualizar rol' }}
         </button>
       </div>
     </form>

@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 
 import { Layout } from './layout/component/layout/layout';
+import { AsignacionCrearComponent } from './modules/asignacion/components/asignacion-crear/asignacion-crear';
+import { AsignacionEditarComponent } from './modules/asignacion/components/asignacion-editar/asignacion-editar';
+import { AsignacionListComponent } from './modules/asignacion/components/asignacion-list/asignacion-list';
 import { CarreraCrearComponent } from './modules/carrera/components/carrera-crear/carrera-crear';
 import { CarreraEditarComponent } from './modules/carrera/components/carrera-editar/carrera-editar';
 import { CarreraGestionComponent } from './modules/carrera/components/carrera-list/carrera-list';
@@ -47,6 +50,9 @@ export const routes: Routes = [
       { path: 'usuarios', component: UsuarioListComponent },
       { path: 'usuarios/crear', component: UsuarioCrearComponent },
       { path: 'usuarios/editar/:id', component: UsuarioEditarComponent },
+      { path: 'asignaciones', component: AsignacionListComponent },
+      { path: 'asignaciones/crear', component: AsignacionCrearComponent },
+      { path: 'asignaciones/editar/:id', component: AsignacionEditarComponent },
     ]
   },
   { path: '**', redirectTo: '/login' }

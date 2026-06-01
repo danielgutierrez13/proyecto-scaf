@@ -12,6 +12,7 @@
 .ciclo-form,
 .curso-form,
 .horario-form,
+.asignacion-form,
 .usuario-form,
 .form-grid {
   display: grid;
@@ -26,6 +27,7 @@
 .ciclo-form,
 .curso-form,
 .horario-form,
+.asignacion-form,
 .form-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   max-width: 980px;
@@ -61,6 +63,7 @@ mat-form-field {
   .ciclo-form,
   .curso-form,
   .horario-form,
+  .asignacion-form,
   .form-grid {
     grid-template-columns: 1fr;
   }

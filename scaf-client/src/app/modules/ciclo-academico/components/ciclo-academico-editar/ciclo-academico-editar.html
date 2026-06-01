@@ -1,11 +1,11 @@
 <section class="form-panel">
   <h2>Actualizar ciclo academico</h2>
 
-  @if (error) {
-    <div class="alert" role="alert">{{ error }}</div>
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
   }
 
-  @if (cargando) {
+  @if (cargando()) {
     <div class="empty-state">
       <strong>Cargando ciclo</strong>
       <span>Consultando informacion registrada.</span>
@@ -41,8 +41,8 @@
 
       <div class="form-actions full-width">
         <a mat-stroked-button routerLink="/layout/ciclos-academicos">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="guardando">
-          {{ guardando ? 'Guardando...' : 'Actualizar ciclo' }}
+        <button mat-flat-button type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Actualizar ciclo' }}
         </button>
       </div>
     </form>

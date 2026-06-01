@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { CarreraService } from '../../service/carrera.service';
 
@@ -24,22 +25,24 @@ export class CarreraEditarComponent implements OnInit {
     descripcion: ['', [Validators.required, Validators.maxLength(255)]],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected carreraId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de carrera no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de carrera no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.carreraId = id;
-    this.cargarCarrera(id);
+      this.carreraId = id;
+      this.cargarCarrera(id);
+    });
   }
 
   protected guardar(): void {
@@ -52,30 +55,33 @@ export class CarreraEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.carreraService.actualizar(this.carreraId, this.carreraForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/carreras']),
       error: () => {
-        this.error = 'No se pudo actualizar la carrera.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar la carrera.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarCarrera(id: number): void {
-    this.carreraService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.carreraService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (carrera) => {
         this.carreraForm.patchValue({
-          nombreCarrera: carrera.nombreCarrera,
-          descripcion: carrera.descripcion,
+          nombreCarrera: carrera.nombreCarrera ?? '',
+          descripcion: carrera.descripcion ?? '',
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar la carrera solicitada.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar la carrera solicitada.');
       },
     });
   }

@@ -1,11 +1,11 @@
 <section class="form-panel">
   <h2>Actualizar carrera</h2>
 
-  @if (error) {
-    <div class="alert" role="alert">{{ error }}</div>
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
   }
 
-  @if (cargando) {
+  @if (cargando()) {
     <div class="empty-state">
       <strong>Cargando carrera</strong>
       <span>Consultando informacion registrada.</span>
@@ -30,8 +30,8 @@
 
       <div class="form-actions">
         <a mat-stroked-button routerLink="/layout/carreras">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="guardando">
-          {{ guardando ? 'Guardando...' : 'Actualizar carrera' }}
+        <button mat-flat-button type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Actualizar carrera' }}
         </button>
       </div>
     </form>

@@ -26,6 +26,7 @@ import { UsuarioCrearComponent } from './modules/usuario/components/usuario-crea
 import { UsuarioEditarComponent } from './modules/usuario/components/usuario-editar/usuario-editar';
 import { UsuarioListComponent } from './modules/usuario/components/usuario-list/usuario-list';
 import { Login } from './security/component/login/login';
+import { AsistenciaComponent } from './modules/asistencia/components/asistencia/asistencia';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -59,7 +60,8 @@ export const routes: Routes = [
       { path: 'inscripciones', component: InscripcionListComponent },
       { path: 'inscripciones/crear', component: InscripcionCrearComponent },
       { path: 'inscripciones/editar/:id', component: InscripcionEditarComponent },
-    ]
+      { path: 'asistencia', component: AsistenciaComponent },
+    ],
   },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' },
 ];

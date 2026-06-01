@@ -1,0 +1,99 @@
+<section class="form-panel">
+  <h2>Registrar usuario</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  <form class="usuario-form" [formGroup]="usuarioForm" (ngSubmit)="guardar()">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombres</mat-label>
+        <input matInput type="text" formControlName="nombres" placeholder="Nombres">
+        @if (usuarioForm.controls.nombres.touched && usuarioForm.controls.nombres.invalid) {
+          <mat-error>Los nombres son obligatorios.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Apellidos</mat-label>
+        <input matInput type="text" formControlName="apellidos" placeholder="Apellidos">
+        @if (usuarioForm.controls.apellidos.touched && usuarioForm.controls.apellidos.invalid) {
+          <mat-error>Los apellidos son obligatorios.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Codigo universitario</mat-label>
+        <input matInput type="text" formControlName="codigoUniversitario" placeholder="Codigo">
+        @if (usuarioForm.controls.codigoUniversitario.touched && usuarioForm.controls.codigoUniversitario.invalid) {
+          <mat-error>El codigo universitario es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Correo institucional</mat-label>
+        <input matInput type="email" formControlName="correoInstitucional" placeholder="correo@utp.edu.pe">
+        @if (usuarioForm.controls.correoInstitucional.touched && usuarioForm.controls.correoInstitucional.invalid) {
+          <mat-error>Ingresa un correo valido.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Minimo 6 caracteres">
+        @if (usuarioForm.controls.password.touched && usuarioForm.controls.password.invalid) {
+          <mat-error>El password es obligatorio y debe tener minimo 6 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Telefono</mat-label>
+        <input matInput type="tel" formControlName="telefono" placeholder="Telefono">
+        @if (usuarioForm.controls.telefono.touched && usuarioForm.controls.telefono.invalid) {
+          <mat-error>El telefono es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="codigoRol">
+          <mat-option [value]="null">Seleccionar rol</mat-option>
+          @for (rol of roles(); track rol.codigoRol) {
+            <mat-option [value]="rol.codigoRol">{{ rol.nombreRol }}</mat-option>
+          }
+        </mat-select>
+        @if (usuarioForm.controls.codigoRol.touched && usuarioForm.controls.codigoRol.invalid) {
+          <mat-error>Selecciona un rol.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Carrera</mat-label>
+        <mat-select formControlName="codigoCarrera">
+          <mat-option [value]="null">Seleccionar carrera</mat-option>
+          @for (carrera of carreras(); track carrera.codigoCarrera) {
+            <mat-option [value]="carrera.codigoCarrera">{{ carrera.nombreCarrera }}</mat-option>
+          }
+        </mat-select>
+        @if (usuarioForm.controls.codigoCarrera.touched && usuarioForm.controls.codigoCarrera.invalid) {
+          <mat-error>Selecciona una carrera.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Foto de usuario</mat-label>
+        <input matInput type="text" formControlName="fotoUsuario" placeholder="URL o nombre de archivo">
+      </mat-form-field>
+
+      <mat-checkbox class="check-control" formControlName="estado">Usuario activo</mat-checkbox>
+    </div>
+
+    <div class="form-actions">
+      <a mat-stroked-button routerLink="/layout/usuarios">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar usuario' }}
+      </button>
+    </div>
+  </form>
+</section>

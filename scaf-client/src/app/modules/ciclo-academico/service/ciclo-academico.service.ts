@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CicloAcademicoRequest, CicloAcademicoResponse } from '../models/ciclo-academico.model';
-import { PaginateResponse } from '../models/paginate-response.model';
+import { CicloAcademicoRequest, CicloAcademicoResponse } from '../../../core/models/ciclo-academico.model';
+import { PaginateResponse } from '../../../core/models/paginate-response.model';
 
 @Injectable({
   providedIn: 'root'

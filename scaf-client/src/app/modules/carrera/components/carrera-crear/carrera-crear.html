@@ -1,0 +1,32 @@
+<section class="form-panel">
+  <h2>Registrar carrera</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  <form class="career-form" [formGroup]="carreraForm" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput type="text" formControlName="nombreCarrera" placeholder="Ej. Ingenieria de Sistemas">
+      @if (carreraForm.controls.nombreCarrera.touched && carreraForm.controls.nombreCarrera.invalid) {
+        <mat-error>El nombre es obligatorio y no debe superar 120 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripcion</mat-label>
+      <textarea matInput rows="5" formControlName="descripcion" placeholder="Describe el enfoque de la carrera"></textarea>
+      @if (carreraForm.controls.descripcion.touched && carreraForm.controls.descripcion.invalid) {
+        <mat-error>La descripcion es obligatoria y no debe superar 255 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions">
+      <a mat-stroked-button routerLink="/layout/carreras">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar carrera' }}
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,59 @@
+.list-page {
+  display: grid;
+  gap: 16px;
+}
+
+.list-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 760px;
+}
+
+td strong,
+td span {
+  display: block;
+}
+
+td span {
+  margin-top: 4px;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.status {
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+}
+
+.empty-state {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+}
+
+@media (max-width: 640px) {
+  .list-title {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

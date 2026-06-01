@@ -1,0 +1,39 @@
+<section class="form-panel">
+  <h2>Actualizar rol</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="empty-state">
+      <strong>Cargando rol</strong>
+      <span>Consultando informacion registrada.</span>
+    </div>
+  } @else {
+    <form class="rol-form" [formGroup]="rolForm" (ngSubmit)="guardar()">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput type="text" formControlName="nombreRol" placeholder="Ej. Administrador">
+        @if (rolForm.controls.nombreRol.touched && rolForm.controls.nombreRol.invalid) {
+          <mat-error>El nombre es obligatorio y no debe superar 80 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descripcion</mat-label>
+        <textarea matInput rows="5" formControlName="descripcion" placeholder="Describe el alcance del rol"></textarea>
+        @if (rolForm.controls.descripcion.touched && rolForm.controls.descripcion.invalid) {
+          <mat-error>La descripcion es obligatoria y no debe superar 255 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions">
+        <a mat-stroked-button routerLink="/layout/roles">Cancelar</a>
+        <button mat-flat-button type="submit" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Actualizar rol' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

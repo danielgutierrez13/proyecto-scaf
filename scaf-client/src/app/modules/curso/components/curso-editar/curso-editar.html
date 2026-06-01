@@ -1,0 +1,60 @@
+<section class="form-panel">
+  <h2>Actualizar curso</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="empty-state">
+      <strong>Cargando curso</strong>
+      <span>Consultando informacion registrada.</span>
+    </div>
+  } @else {
+    <form class="curso-form" [formGroup]="cursoForm" (ngSubmit)="guardar()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput type="text" formControlName="nombre" placeholder="Ej. Programacion I">
+        @if (cursoForm.controls.nombre.touched && cursoForm.controls.nombre.invalid) {
+          <mat-error>El nombre es obligatorio y no debe superar 120 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Creditos</mat-label>
+        <input matInput type="number" formControlName="creditos" min="1" max="10">
+        @if (cursoForm.controls.creditos.touched && cursoForm.controls.creditos.invalid) {
+          <mat-error>Los creditos deben estar entre 1 y 10.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ciclo</mat-label>
+        <input matInput type="number" formControlName="ciclo" min="1" max="12">
+        @if (cursoForm.controls.ciclo.touched && cursoForm.controls.ciclo.invalid) {
+          <mat-error>El ciclo debe estar entre 1 y 12.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Modalidad</mat-label>
+        <mat-select formControlName="modalidad">
+          <mat-option value="">Seleccionar modalidad</mat-option>
+          @for (modalidad of modalidades; track modalidad) {
+            <mat-option [value]="modalidad">{{ modalidad }}</mat-option>
+          }
+        </mat-select>
+        @if (cursoForm.controls.modalidad.touched && cursoForm.controls.modalidad.invalid) {
+          <mat-error>Selecciona una modalidad.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions full-width">
+        <a mat-stroked-button routerLink="/layout/cursos">Cancelar</a>
+        <button mat-flat-button type="submit" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Actualizar curso' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { CarreraResponse } from '../../../../core/models/carrera.model';
 import { RolResponse } from '../../../../core/models/rol.model';
@@ -43,7 +44,7 @@ export class UsuarioEditarComponent implements OnInit {
     apellidos: ['', [Validators.required, Validators.maxLength(120)]],
     codigoUniversitario: ['', [Validators.required, Validators.maxLength(30)]],
     correoInstitucional: ['', [Validators.required, Validators.email, Validators.maxLength(160)]],
-    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
+    password: ['', [Validators.minLength(6), Validators.maxLength(80)]],
     telefono: ['', [Validators.required, Validators.maxLength(20)]],
     codigoRol: this.fb.control<number | null>(null, Validators.required),
     fotoUsuario: ['', Validators.maxLength(255)],
@@ -51,23 +52,25 @@ export class UsuarioEditarComponent implements OnInit {
     estado: [true],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected usuarioId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de usuario no es valido.';
-      this.cargando = false;
-      return;
-    }
-
-    this.usuarioId = id;
     this.cargarCatalogos();
-    this.cargarUsuario(id);
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
+
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de usuario no es valido.');
+        this.cargando.set(false);
+        return;
+      }
+
+      this.usuarioId = id;
+      this.cargarUsuario(id);
+    });
   }
 
   protected guardar(): void {
@@ -80,38 +83,41 @@ export class UsuarioEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.usuarioService.actualizar(this.usuarioId, this.usuarioForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/usuarios']),
       error: () => {
-        this.error = 'No se pudo actualizar el usuario.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar el usuario.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarUsuario(id: number): void {
-    this.usuarioService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.usuarioService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (usuario) => {
         this.usuarioForm.patchValue({
-          nombres: usuario.nombres,
-          apellidos: usuario.apellidos,
-          codigoUniversitario: usuario.codigoUniversitario,
-          correoInstitucional: usuario.correoInstitucional,
+          nombres: usuario.nombres ?? '',
+          apellidos: usuario.apellidos ?? '',
+          codigoUniversitario: usuario.codigoUniversitario ?? '',
+          correoInstitucional: usuario.correoInstitucional ?? '',
           password: '',
-          telefono: usuario.telefono,
-          codigoRol: usuario.codigoRol,
-          fotoUsuario: usuario.fotoUsuario,
-          codigoCarrera: usuario.codigoCarrera,
-          estado: usuario.estado,
+          telefono: usuario.telefono ?? '',
+          codigoRol: usuario.codigoRol ? Number(usuario.codigoRol) : null,
+          fotoUsuario: usuario.fotoUsuario ?? '',
+          codigoCarrera: usuario.codigoCarrera ? Number(usuario.codigoCarrera) : null,
+          estado: Boolean(usuario.estado),
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar el usuario solicitado.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar el usuario solicitado.');
       },
     });
   }
@@ -119,12 +125,12 @@ export class UsuarioEditarComponent implements OnInit {
   private cargarCatalogos(): void {
     this.rolService.listar(0, 100).subscribe({
       next: (response) => this.roles.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar los roles.',
+      error: () => this.error.set('No se pudieron cargar los roles.'),
     });
 
     this.carreraService.listar(0, 100).subscribe({
       next: (response) => this.carreras.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar las carreras.',
+      error: () => this.error.set('No se pudieron cargar las carreras.'),
     });
   }
 }

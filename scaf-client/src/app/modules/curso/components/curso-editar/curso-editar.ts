@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { CursoService } from '../../service/curso.service';
 
@@ -29,22 +30,24 @@ export class CursoEditarComponent implements OnInit {
     modalidad: ['', [Validators.required, Validators.maxLength(40)]],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected cursoId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de curso no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de curso no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.cursoId = id;
-    this.cargarCurso(id);
+      this.cursoId = id;
+      this.cargarCurso(id);
+    });
   }
 
   protected guardar(): void {
@@ -57,32 +60,35 @@ export class CursoEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.cursoService.actualizar(this.cursoId, this.cursoForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/cursos']),
       error: () => {
-        this.error = 'No se pudo actualizar el curso.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar el curso.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarCurso(id: number): void {
-    this.cursoService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.cursoService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (curso) => {
         this.cursoForm.patchValue({
-          nombre: curso.nombre,
-          creditos: curso.creditos,
-          ciclo: curso.ciclo,
-          modalidad: curso.modalidad,
+          nombre: curso.nombre ?? '',
+          creditos: Number(curso.creditos),
+          ciclo: Number(curso.ciclo),
+          modalidad: curso.modalidad ?? '',
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar el curso solicitado.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar el curso solicitado.');
       },
     });
   }

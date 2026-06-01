@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { AsignacionRequest, AsignacionResponse } from '../models/asignacion.model';
-import { PaginateResponse } from '../models/paginate-response.model';
+import { AsignacionRequest, AsignacionResponse } from '../../../core/models/asignacion.model';
+import { PaginateResponse } from '../../../core/models/paginate-response.model';
 
 @Injectable({
   providedIn: 'root'

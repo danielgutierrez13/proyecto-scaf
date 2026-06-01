@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { CicloAcademicoService } from '../../service/ciclo-academico.service';
 
@@ -26,22 +27,24 @@ export class CicloAcademicoEditarComponent implements OnInit {
     descripcion: ['', [Validators.required, Validators.maxLength(160)]],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected cicloId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de ciclo academico no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de ciclo academico no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.cicloId = id;
-    this.cargarCiclo(id);
+      this.cicloId = id;
+      this.cargarCiclo(id);
+    });
   }
 
   protected guardar(): void {
@@ -54,31 +57,34 @@ export class CicloAcademicoEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.cicloAcademicoService.actualizar(this.cicloId, this.cicloForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/ciclos-academicos']),
       error: () => {
-        this.error = 'No se pudo actualizar el ciclo academico.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar el ciclo academico.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarCiclo(id: number): void {
-    this.cicloAcademicoService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.cicloAcademicoService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (ciclo) => {
         this.cicloForm.patchValue({
-          anio: ciclo.anio,
-          semestre: ciclo.semestre,
-          descripcion: ciclo.descripcion,
+          anio: Number(ciclo.anio),
+          semestre: Number(ciclo.semestre),
+          descripcion: ciclo.descripcion ?? '',
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar el ciclo academico solicitado.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar el ciclo academico solicitado.');
       },
     });
   }

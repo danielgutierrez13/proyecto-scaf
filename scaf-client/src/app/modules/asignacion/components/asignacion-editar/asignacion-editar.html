@@ -1,0 +1,77 @@
+<section class="form-panel">
+  <h2>Actualizar asignacion</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="empty-state">Cargando asignacion...</div>
+  } @else {
+    <form class="asignacion-form" [formGroup]="asignacionForm" (ngSubmit)="guardar()">
+      <mat-form-field appearance="outline">
+        <mat-label>Docente</mat-label>
+        <mat-select formControlName="codigoDocente">
+          <mat-option [value]="null">Seleccionar docente</mat-option>
+          @for (docente of docentes(); track docente.codigoUsuario) {
+            <mat-option [value]="docente.codigoUsuario">{{ docente.nombres }} {{ docente.apellidos }}</mat-option>
+          }
+        </mat-select>
+        @if (asignacionForm.controls.codigoDocente.touched && asignacionForm.controls.codigoDocente.invalid) {
+          <mat-error>Selecciona un docente.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Curso</mat-label>
+        <mat-select formControlName="codigoCurso">
+          <mat-option [value]="null">Seleccionar curso</mat-option>
+          @for (curso of cursos(); track curso.codigoCurso) {
+            <mat-option [value]="curso.codigoCurso">{{ curso.nombre }}</mat-option>
+          }
+        </mat-select>
+        @if (asignacionForm.controls.codigoCurso.touched && asignacionForm.controls.codigoCurso.invalid) {
+          <mat-error>Selecciona un curso.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Horario</mat-label>
+        <mat-select formControlName="codigoHorario">
+          <mat-option [value]="null">Seleccionar horario</mat-option>
+          @for (horario of horarios(); track horario.codigoHorario) {
+            <mat-option [value]="horario.codigoHorario">
+              {{ horario.dia }} {{ horario.horaInicio }} - {{ horario.horaFin }} | {{ horario.aula }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (asignacionForm.controls.codigoHorario.touched && asignacionForm.controls.codigoHorario.invalid) {
+          <mat-error>Selecciona un horario.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ciclo academico</mat-label>
+        <mat-select formControlName="codigoCicloAcademico">
+          <mat-option [value]="null">Seleccionar ciclo</mat-option>
+          @for (ciclo of ciclos(); track ciclo.codigoCicloAcademico) {
+            <mat-option [value]="ciclo.codigoCicloAcademico">{{ ciclo.descripcion }}</mat-option>
+          }
+        </mat-select>
+        @if (
+          asignacionForm.controls.codigoCicloAcademico.touched &&
+          asignacionForm.controls.codigoCicloAcademico.invalid
+        ) {
+          <mat-error>Selecciona un ciclo academico.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions full-width">
+        <a mat-stroked-button routerLink="/layout/asignaciones">Cancelar</a>
+        <button mat-flat-button type="submit" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Actualizar asignacion' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

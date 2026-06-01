@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { HorarioService } from '../../service/horario.service';
 
@@ -29,22 +30,24 @@ export class HorarioEditarComponent implements OnInit {
     aula: ['', [Validators.required, Validators.maxLength(40)]],
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected horarioId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de horario no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de horario no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.horarioId = id;
-    this.cargarHorario(id);
+      this.horarioId = id;
+      this.cargarHorario(id);
+    });
   }
 
   protected guardar(): void {
@@ -57,32 +60,35 @@ export class HorarioEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.horarioService.actualizar(this.horarioId, this.horarioForm.getRawValue()).subscribe({
       next: () => this.router.navigate(['/layout/horarios']),
       error: () => {
-        this.error = 'No se pudo actualizar el horario.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar el horario.');
+        this.guardando.set(false);
       },
     });
   }
 
   private cargarHorario(id: number): void {
-    this.horarioService.buscarPorId(id).subscribe({
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.horarioService.buscarPorId(id).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
       next: (horario) => {
         this.horarioForm.patchValue({
-          dia: horario.dia,
-          horaInicio: horario.horaInicio,
-          horaFin: horario.horaFin,
-          aula: horario.aula,
+          dia: horario.dia ?? '',
+          horaInicio: horario.horaInicio ?? '',
+          horaFin: horario.horaFin ?? '',
+          aula: horario.aula ?? '',
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar el horario solicitado.';
-        this.cargando = false;
+        this.error.set('No se pudo encontrar el horario solicitado.');
       },
     });
   }

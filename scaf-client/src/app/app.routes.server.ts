@@ -2,6 +2,18 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
+    path: 'layout/asignaciones',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'layout/asignaciones/crear',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'layout/asignaciones/editar/:id',
+    renderMode: RenderMode.Client
+  },
+  {
     path: 'layout/carreras',
     renderMode: RenderMode.Client
   },

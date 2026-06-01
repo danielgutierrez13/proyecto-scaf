@@ -1,0 +1,69 @@
+<section class="list-page">
+  <div class="list-title">
+    <h2>Inscripciones</h2>
+    <a mat-flat-button routerLink="/layout/inscripciones/crear">Nueva inscripcion</a>
+  </div>
+
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="empty-state">Cargando inscripciones...</div>
+  } @else if (!inscripciones().length) {
+    <div class="empty-state">No hay inscripciones registradas.</div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="inscripciones()">
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Codigo</th>
+          <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.codigoInscripcion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estudiante">
+          <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+          <td mat-cell *matCellDef="let inscripcion">
+            <strong>{{ inscripcion.nombreEstudiante || 'Sin estudiante' }}</strong>
+            <span>{{ inscripcion.codigoEstudiante || '-' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="asignacion">
+          <th mat-header-cell *matHeaderCellDef>Asignacion</th>
+          <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.codigoAsignacion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="curso">
+          <th mat-header-cell *matHeaderCellDef>Curso</th>
+          <td mat-cell *matCellDef="let inscripcion">{{ inscripcion.nombreCurso || 'Sin curso' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let inscripcion">
+            <div class="row-actions">
+              <a mat-button [routerLink]="['/layout/inscripciones/editar', inscripcion.codigoInscripcion]">Editar</a>
+              <button mat-button type="button" color="warn" (click)="eliminarInscripcion(inscripcion)">
+                Eliminar
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['codigo', 'estudiante', 'asignacion', 'curso', 'acciones']"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['codigo', 'estudiante', 'asignacion', 'curso', 'acciones'];"
+        ></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageIndex]="paginaActual()"
+      [pageSize]="pageSize"
+      [hidePageSize]="true"
+      (page)="cargarInscripciones($event.pageIndex)"
+    />
+  }
+</section>

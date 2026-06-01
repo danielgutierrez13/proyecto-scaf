@@ -1,0 +1,43 @@
+<section class="form-panel">
+  <h2>Registrar ciclo academico</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  <form class="ciclo-form" [formGroup]="cicloForm" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Anio</mat-label>
+      <input matInput type="number" formControlName="anio" min="2000" max="2100">
+      @if (cicloForm.controls.anio.touched && cicloForm.controls.anio.invalid) {
+        <mat-error>El anio debe estar entre 2000 y 2100.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Semestre</mat-label>
+      <mat-select formControlName="semestre">
+        <mat-option [value]="1">1</mat-option>
+        <mat-option [value]="2">2</mat-option>
+      </mat-select>
+      @if (cicloForm.controls.semestre.touched && cicloForm.controls.semestre.invalid) {
+        <mat-error>Selecciona un semestre valido.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripcion</mat-label>
+      <input matInput type="text" formControlName="descripcion" placeholder="Ej. 2026-I">
+      @if (cicloForm.controls.descripcion.touched && cicloForm.controls.descripcion.invalid) {
+        <mat-error>La descripcion es obligatoria y no debe superar 160 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions full-width">
+      <a mat-stroked-button routerLink="/layout/ciclos-academicos">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar ciclo' }}
+      </button>
+    </div>
+  </form>
+</section>

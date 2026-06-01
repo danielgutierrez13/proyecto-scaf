@@ -1,3 +1,16 @@
+export interface UsuarioRequest {
+  nombres: string;
+  apellidos: string;
+  codigoUniversitario: string;
+  correoInstitucional: string;
+  password: string;
+  telefono: string;
+  codigoRol: number | null;
+  fotoUsuario: string;
+  codigoCarrera: number | null;
+  estado: boolean;
+}
+
 export interface UsuarioResponse {
   codigoUsuario: number;
   nombres: string;

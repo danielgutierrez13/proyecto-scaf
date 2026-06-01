@@ -1,0 +1,66 @@
+<section class="list-page">
+  <div class="list-title">
+    <h2>Horarios</h2>
+    <a mat-flat-button routerLink="/layout/horarios/crear">Nuevo horario</a>
+  </div>
+
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="empty-state">Cargando horarios...</div>
+  } @else if (!horarios().length) {
+    <div class="empty-state">No hay horarios registrados.</div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="horarios()">
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Codigo</th>
+          <td mat-cell *matCellDef="let horario">{{ horario.codigoHorario }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="dia">
+          <th mat-header-cell *matHeaderCellDef>Dia</th>
+          <td mat-cell *matCellDef="let horario">{{ horario.dia }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="horaInicio">
+          <th mat-header-cell *matHeaderCellDef>Hora inicio</th>
+          <td mat-cell *matCellDef="let horario">{{ horario.horaInicio }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="horaFin">
+          <th mat-header-cell *matHeaderCellDef>Hora fin</th>
+          <td mat-cell *matCellDef="let horario">{{ horario.horaFin }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="aula">
+          <th mat-header-cell *matHeaderCellDef>Aula</th>
+          <td mat-cell *matCellDef="let horario">{{ horario.aula }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let horario">
+            <div class="row-actions">
+              <a mat-button [routerLink]="['/layout/horarios/editar', horario.codigoHorario]">Editar</a>
+              <button mat-button type="button" color="warn" (click)="eliminarHorario(horario)">Eliminar</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['codigo', 'dia', 'horaInicio', 'horaFin', 'aula', 'acciones']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['codigo', 'dia', 'horaInicio', 'horaFin', 'aula', 'acciones'];"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageIndex]="paginaActual()"
+      [pageSize]="pageSize"
+      [hidePageSize]="true"
+      (page)="cargarHorarios($event.pageIndex)"
+    />
+  }
+</section>

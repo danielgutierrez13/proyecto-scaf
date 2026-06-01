@@ -1,0 +1,78 @@
+<section class="list-page">
+  <div class="list-title">
+    <h2>Usuarios</h2>
+    <a mat-flat-button routerLink="/layout/usuarios/crear">Nuevo usuario</a>
+  </div>
+
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="empty-state">Cargando usuarios...</div>
+  } @else if (!usuarios().length) {
+    <div class="empty-state">No hay usuarios registrados.</div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="usuarios()">
+        <ng-container matColumnDef="usuario">
+          <th mat-header-cell *matHeaderCellDef>Usuario</th>
+          <td mat-cell *matCellDef="let usuario">
+            <strong>{{ usuario.nombres }} {{ usuario.apellidos }}</strong>
+            <span>{{ usuario.telefono || 'Sin telefono' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="correo">
+          <th mat-header-cell *matHeaderCellDef>Correo</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.correoInstitucional }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Codigo</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.codigoUniversitario }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rol">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.nombreRol || 'Sin rol' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="carrera">
+          <th mat-header-cell *matHeaderCellDef>Carrera</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.nombreCarrera || 'Sin carrera' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let usuario">
+            <span class="status" [class.inactive]="!usuario.estado">
+              {{ usuario.estado ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let usuario">
+            <div class="row-actions">
+              <a mat-button [routerLink]="['/layout/usuarios/editar', usuario.codigoUsuario]">Editar</a>
+              <button mat-button type="button" color="warn" (click)="eliminarUsuario(usuario)">Eliminar</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['usuario', 'correo', 'codigo', 'rol', 'carrera', 'estado', 'acciones']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['usuario', 'correo', 'codigo', 'rol', 'carrera', 'estado', 'acciones'];"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageIndex]="paginaActual()"
+      [pageSize]="pageSize"
+      [hidePageSize]="true"
+      (page)="cargarUsuarios($event.pageIndex)"
+    />
+  }
+</section>

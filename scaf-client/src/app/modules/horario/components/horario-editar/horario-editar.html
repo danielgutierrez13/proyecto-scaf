@@ -1,0 +1,60 @@
+<section class="form-panel">
+  <h2>Actualizar horario</h2>
+
+  @if (error) {
+    <div class="alert" role="alert">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="empty-state">
+      <strong>Cargando horario</strong>
+      <span>Consultando informacion registrada.</span>
+    </div>
+  } @else {
+    <form class="horario-form" [formGroup]="horarioForm" (ngSubmit)="guardar()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Dia</mat-label>
+        <mat-select formControlName="dia">
+          <mat-option value="">Seleccionar dia</mat-option>
+          @for (dia of dias; track dia) {
+            <mat-option [value]="dia">{{ dia }}</mat-option>
+          }
+        </mat-select>
+        @if (horarioForm.controls.dia.touched && horarioForm.controls.dia.invalid) {
+          <mat-error>Selecciona un dia.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hora inicio</mat-label>
+        <input matInput type="time" formControlName="horaInicio">
+        @if (horarioForm.controls.horaInicio.touched && horarioForm.controls.horaInicio.invalid) {
+          <mat-error>La hora de inicio es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hora fin</mat-label>
+        <input matInput type="time" formControlName="horaFin">
+        @if (horarioForm.controls.horaFin.touched && horarioForm.controls.horaFin.invalid) {
+          <mat-error>La hora de fin es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Aula</mat-label>
+        <input matInput type="text" formControlName="aula" placeholder="Ej. A-301">
+        @if (horarioForm.controls.aula.touched && horarioForm.controls.aula.invalid) {
+          <mat-error>El aula es obligatoria y no debe superar 40 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions full-width">
+        <a mat-stroked-button routerLink="/layout/horarios">Cancelar</a>
+        <button mat-flat-button type="submit" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Actualizar horario' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

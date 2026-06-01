@@ -21,6 +21,8 @@ export class Layout {
       label: 'Usuarios',
       icon: 'US',
       children: [
+        { label: 'Roles', icon: 'S0', route: '/layout/roles' },
+        { label: 'Usuarios', icon: 'S1', route: '/layout/usuarios' },
         { label: 'Docentes', icon: 'S1' },
         { label: 'Estudiantes', icon: 'S2' },
       ],
@@ -31,8 +33,8 @@ export class Layout {
       children: [
         { label: 'Cursos', icon: 'S1', route: '/layout/cursos' },
         { label: 'Asignacion', icon: 'S2', route: '/layout/asignaciones' },
-        { label: 'Horarios', icon: 'S3' },
-        { label: 'Ciclo Academico', icon: 'S2' },
+        { label: 'Horarios', icon: 'S3', route: '/layout/horarios' },
+        { label: 'Ciclo Academico', icon: 'S2', route: '/layout/ciclos-academicos' },
         { label: 'Carreras', icon: 'S4', route: '/layout/carreras' },
         { label: 'Inscripciones', icon: 'S5', route: '/layout/inscripciones' },
         { label: 'Asistencia', icon: 'S6' },

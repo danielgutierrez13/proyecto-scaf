@@ -1,0 +1,56 @@
+<section class="list-page">
+  <div class="list-title">
+    <h2>Carreras</h2>
+    <a mat-flat-button routerLink="/layout/carreras/crear">Nueva carrera</a>
+  </div>
+
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="empty-state">Cargando carreras...</div>
+  } @else if (!carreras().length) {
+    <div class="empty-state">No hay carreras registradas.</div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="carreras()">
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Codigo</th>
+          <td mat-cell *matCellDef="let carrera">{{ carrera.codigoCarrera }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let carrera">{{ carrera.nombreCarrera }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="descripcion">
+          <th mat-header-cell *matHeaderCellDef>Descripcion</th>
+          <td mat-cell *matCellDef="let carrera">{{ carrera.descripcion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let carrera">
+            <div class="row-actions">
+              <a mat-button [routerLink]="['/layout/carreras/editar', carrera.codigoCarrera]">Editar</a>
+              <button mat-button type="button" color="warn" (click)="eliminarCarrera(carrera)">Eliminar</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['codigo', 'nombre', 'descripcion', 'acciones']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['codigo', 'nombre', 'descripcion', 'acciones'];"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageIndex]="paginaActual()"
+      [pageSize]="pageSize"
+      [hidePageSize]="true"
+      (page)="cargarCarreras($event.pageIndex)"
+    />
+  }
+</section>

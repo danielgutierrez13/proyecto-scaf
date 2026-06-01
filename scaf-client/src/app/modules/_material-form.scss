@@ -1,0 +1,72 @@
+.form-panel {
+  display: grid;
+  gap: 18px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.career-form,
+.rol-form,
+.ciclo-form,
+.curso-form,
+.horario-form,
+.usuario-form,
+.form-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.career-form,
+.rol-form {
+  max-width: 760px;
+}
+
+.ciclo-form,
+.curso-form,
+.horario-form,
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 980px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.check-control {
+  align-self: center;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 980px;
+  gap: 12px;
+}
+
+.empty-state {
+  display: grid;
+  min-height: 180px;
+  max-width: 980px;
+  place-items: center;
+}
+
+@media (max-width: 760px) {
+  .ciclo-form,
+  .curso-form,
+  .horario-form,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

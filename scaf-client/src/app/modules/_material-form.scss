@@ -13,6 +13,7 @@
 .curso-form,
 .horario-form,
 .asignacion-form,
+.inscripcion-form,
 .usuario-form,
 .form-grid {
   display: grid;
@@ -28,6 +29,7 @@
 .curso-form,
 .horario-form,
 .asignacion-form,
+.inscripcion-form,
 .form-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   max-width: 980px;
@@ -64,6 +66,7 @@ mat-form-field {
   .curso-form,
   .horario-form,
   .asignacion-form,
+  .inscripcion-form,
   .form-grid {
     grid-template-columns: 1fr;
   }

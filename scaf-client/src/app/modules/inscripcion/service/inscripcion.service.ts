@@ -2,11 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { InscripcionRequest, InscripcionResponse } from '../models/inscripcion.model';
-import { PaginateResponse } from '../models/paginate-response.model';
+import { InscripcionRequest, InscripcionResponse } from '../../../core/models/inscripcion.model';
+import { PaginateResponse } from '../../../core/models/paginate-response.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class InscripcionService {
   private readonly apiUrl = 'http://localhost:9091/api/inscripciones';
@@ -15,7 +15,7 @@ export class InscripcionService {
 
   listar(page: number, size: number): Observable<PaginateResponse<InscripcionResponse>> {
     return this.http.get<PaginateResponse<InscripcionResponse>>(this.apiUrl, {
-      params: { page, size }
+      params: { page, size },
     });
   }
 

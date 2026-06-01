@@ -16,6 +16,9 @@ import { CursoListComponent } from './modules/curso/components/curso-list/curso-
 import { HorarioCrearComponent } from './modules/horario/components/horario-crear/horario-crear';
 import { HorarioEditarComponent } from './modules/horario/components/horario-editar/horario-editar';
 import { HorarioListComponent } from './modules/horario/components/horario-list/horario-list';
+import { InscripcionCrearComponent } from './modules/inscripcion/components/inscripcion-crear/inscripcion-crear';
+import { InscripcionEditarComponent } from './modules/inscripcion/components/inscripcion-editar/inscripcion-editar';
+import { InscripcionListComponent } from './modules/inscripcion/components/inscripcion-list/inscripcion-list';
 import { RolCrearComponent } from './modules/rol/components/rol-crear/rol-crear';
 import { RolEditarComponent } from './modules/rol/components/rol-editar/rol-editar';
 import { RolListComponent } from './modules/rol/components/rol-list/rol-list';
@@ -53,6 +56,9 @@ export const routes: Routes = [
       { path: 'asignaciones', component: AsignacionListComponent },
       { path: 'asignaciones/crear', component: AsignacionCrearComponent },
       { path: 'asignaciones/editar/:id', component: AsignacionEditarComponent },
+      { path: 'inscripciones', component: InscripcionListComponent },
+      { path: 'inscripciones/crear', component: InscripcionCrearComponent },
+      { path: 'inscripciones/editar/:id', component: InscripcionEditarComponent },
     ]
   },
   { path: '**', redirectTo: '/login' }

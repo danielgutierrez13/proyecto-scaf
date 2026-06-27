@@ -28,8 +28,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioMapper usuarioMapper;
 
     @Override
-    public PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable) {
-        Page<UsuarioResponseDto> pagina = usuarioRepository.findAll(pageable)
+    public PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable, String nombreRol) {
+        Page<Usuario> usuarios = (nombreRol == null || nombreRol.isBlank())
+                ? usuarioRepository.findAll(pageable)
+                : usuarioRepository.findByRol_NombreRolIgnoreCase(nombreRol, pageable);
+
+        Page<UsuarioResponseDto> pagina = usuarios
                 .map(usuarioMapper::toResponseDto);
 
         return new PaginateResponseDto<>(

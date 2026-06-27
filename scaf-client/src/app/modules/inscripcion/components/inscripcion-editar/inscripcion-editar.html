@@ -1,11 +1,11 @@
 <section class="form-panel">
   <h2>Actualizar inscripcion</h2>
 
-  @if (error) {
-    <div class="alert" role="alert">{{ error }}</div>
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
   }
 
-  @if (cargando) {
+  @if (cargando()) {
     <div class="empty-state">Cargando inscripcion...</div>
   } @else {
     <form class="inscripcion-form" [formGroup]="inscripcionForm" (ngSubmit)="guardar()">
@@ -39,8 +39,8 @@
 
       <div class="form-actions full-width">
         <a mat-stroked-button routerLink="/layout/inscripciones">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="guardando">
-          {{ guardando ? 'Guardando...' : 'Actualizar inscripcion' }}
+        <button mat-flat-button type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Actualizar inscripcion' }}
         </button>
       </div>
     </form>

@@ -17,55 +17,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pe.utp.dto.PaginateResponseDto;
-import pe.utp.dto.usuario.UsuarioRequestDto;
-import pe.utp.dto.usuario.UsuarioResponseDto;
-import pe.utp.service.UsuarioService;
+import pe.utp.dto.tipoAsistencia.TipoAsistenciaRequestDto;
+import pe.utp.dto.tipoAsistencia.TipoAsistenciaResponseDto;
+import pe.utp.service.TipoAsistenciaService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/tipos-asistencia")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioController {
+public class TipoAsistenciaController {
 
-    private final UsuarioService usuarioService;
+    private final TipoAsistenciaService tipoAsistenciaService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaginateResponseDto<UsuarioResponseDto> listar(
+    public PaginateResponseDto<TipoAsistenciaResponseDto> listar(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String nombreRol
+            @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.listar(pageable, nombreRol);
+        return tipoAsistenciaService.listar(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public TipoAsistenciaResponseDto buscarPorId(@PathVariable Long id) {
+        return tipoAsistenciaService.buscarPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponseDto crear(
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
-    ) {
-        return usuarioService.crear(usuarioRequestDto);
+    public TipoAsistenciaResponseDto crear(@Valid @RequestBody TipoAsistenciaRequestDto tipoAsistenciaRequestDto) {
+        return tipoAsistenciaService.crear(tipoAsistenciaRequestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioResponseDto actualizar(
+    public TipoAsistenciaResponseDto actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDto usuarioRequestDto
+            @Valid @RequestBody TipoAsistenciaRequestDto tipoAsistenciaRequestDto
     ) {
-        return usuarioService.actualizar(id, usuarioRequestDto);
+        return tipoAsistenciaService.actualizar(id, tipoAsistenciaRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        usuarioService.eliminar(id);
+        tipoAsistenciaService.eliminar(id);
     }
 }

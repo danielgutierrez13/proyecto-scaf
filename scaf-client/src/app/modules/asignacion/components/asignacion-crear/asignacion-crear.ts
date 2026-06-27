@@ -80,7 +80,7 @@ export class AsignacionCrearComponent implements OnInit {
   }
 
   private cargarCatalogos(): void {
-    this.usuarioService.listar(0, 100).subscribe({
+    this.usuarioService.listarPorRol(0, 100, 'DOCENTE').subscribe({
       next: (response) => this.docentes.set(response.lista ?? []),
       error: () => this.error = 'No se pudieron cargar los docentes.',
     });

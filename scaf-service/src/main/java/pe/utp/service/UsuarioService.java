@@ -7,7 +7,7 @@ import pe.utp.dto.usuario.UsuarioResponseDto;
 
 public interface UsuarioService {
 
-    PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable);
+    PaginateResponseDto<UsuarioResponseDto> listar(Pageable pageable, String nombreRol);
 
     UsuarioResponseDto buscarPorId(Long id);
 

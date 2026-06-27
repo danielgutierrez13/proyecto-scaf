@@ -62,6 +62,18 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
+    path: 'layout/inscripciones',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'layout/inscripciones/crear',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'layout/inscripciones/editar/:id',
+    renderMode: RenderMode.Client
+  },
+  {
     path: 'layout/roles',
     renderMode: RenderMode.Client
   },

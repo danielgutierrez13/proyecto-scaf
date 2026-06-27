@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize, forkJoin } from 'rxjs';
 
 import { AsignacionRequest } from '../../../../core/models/asignacion.model';
 import { CicloAcademicoResponse } from '../../../../core/models/ciclo-academico.model';
@@ -44,23 +45,24 @@ export class AsignacionEditarComponent implements OnInit {
     codigoCicloAcademico: this.fb.control<number | null>(null, Validators.required),
   });
 
-  protected cargando = true;
-  protected guardando = false;
-  protected error: string | null = null;
+  protected readonly cargando = signal(true);
+  protected readonly guardando = signal(false);
+  protected readonly error = signal<string | null>(null);
   protected asignacionId: number | null = null;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
 
-    if (!Number.isFinite(id) || id <= 0) {
-      this.error = 'El identificador de asignacion no es valido.';
-      this.cargando = false;
-      return;
-    }
+      if (!Number.isFinite(id) || id <= 0) {
+        this.error.set('El identificador de asignacion no es valido.');
+        this.cargando.set(false);
+        return;
+      }
 
-    this.asignacionId = id;
-    this.cargarCatalogos();
-    this.cargarAsignacion(id);
+      this.asignacionId = id;
+      this.cargarAsignacion(id);
+    });
   }
 
   protected guardar(): void {
@@ -73,14 +75,14 @@ export class AsignacionEditarComponent implements OnInit {
       return;
     }
 
-    this.guardando = true;
-    this.error = null;
+    this.guardando.set(true);
+    this.error.set(null);
 
     this.asignacionService.actualizar(this.asignacionId, this.obtenerPayload()).subscribe({
       next: () => this.router.navigate(['/layout/asignaciones']),
       error: () => {
-        this.error = 'No se pudo actualizar la asignacion.';
-        this.guardando = false;
+        this.error.set('No se pudo actualizar la asignacion.');
+        this.guardando.set(false);
       },
     });
   }
@@ -97,42 +99,33 @@ export class AsignacionEditarComponent implements OnInit {
   }
 
   private cargarAsignacion(id: number): void {
-    this.asignacionService.buscarPorId(id).subscribe({
-      next: (asignacion) => {
+    this.cargando.set(true);
+    this.error.set(null);
+
+    forkJoin({
+      asignacion: this.asignacionService.buscarPorId(id),
+      docentes: this.usuarioService.listarPorRol(0, 100, 'DOCENTE'),
+      cursos: this.cursoService.listar(0, 100),
+      horarios: this.horarioService.listar(0, 100),
+      ciclos: this.cicloAcademicoService.listar(0, 100),
+    }).pipe(
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
+      next: ({ asignacion, docentes, cursos, horarios, ciclos }) => {
+        this.docentes.set(docentes.lista ?? []);
+        this.cursos.set(cursos.lista ?? []);
+        this.horarios.set(horarios.lista ?? []);
+        this.ciclos.set(ciclos.lista ?? []);
         this.asignacionForm.patchValue({
-          codigoDocente: asignacion.codigoDocente,
-          codigoCurso: asignacion.codigoCurso,
-          codigoHorario: asignacion.codigoHorario,
-          codigoCicloAcademico: asignacion.codigoCicloAcademico,
+          codigoDocente: asignacion.codigoDocente ? Number(asignacion.codigoDocente) : null,
+          codigoCurso: asignacion.codigoCurso ? Number(asignacion.codigoCurso) : null,
+          codigoHorario: asignacion.codigoHorario ? Number(asignacion.codigoHorario) : null,
+          codigoCicloAcademico: asignacion.codigoCicloAcademico ? Number(asignacion.codigoCicloAcademico) : null,
         });
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo encontrar la asignacion solicitada.';
-        this.cargando = false;
+        this.error.set('No se pudo cargar la asignacion solicitada.');
       },
-    });
-  }
-
-  private cargarCatalogos(): void {
-    this.usuarioService.listar(0, 100).subscribe({
-      next: (response) => this.docentes.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar los docentes.',
-    });
-
-    this.cursoService.listar(0, 100).subscribe({
-      next: (response) => this.cursos.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar los cursos.',
-    });
-
-    this.horarioService.listar(0, 100).subscribe({
-      next: (response) => this.horarios.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar los horarios.',
-    });
-
-    this.cicloAcademicoService.listar(0, 100).subscribe({
-      next: (response) => this.ciclos.set(response.lista ?? []),
-      error: () => this.error = 'No se pudieron cargar los ciclos academicos.',
     });
   }
 }

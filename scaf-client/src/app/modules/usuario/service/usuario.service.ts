@@ -22,6 +22,16 @@ export class UsuarioService {
     });
   }
 
+  listarPorRol(page: number, size: number, nombreRol: string): Observable<PaginateResponse<UsuarioResponse>> {
+    return this.http.get<PaginateResponse<UsuarioResponse>>(this.apiUrl, {
+      params: {
+        page,
+        size,
+        nombreRol,
+      },
+    });
+  }
+
   buscarPorId(id: number): Observable<UsuarioResponse> {
     return this.http.get<UsuarioResponse>(`${this.apiUrl}/${id}`);
   }

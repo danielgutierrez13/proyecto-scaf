@@ -1,1 +1,233 @@
 @use '../usuario-form' as form;
+
+// ── Sección webcam ───────────────────────────────────────────────────────────
+
+.webcam-section {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  max-width: 980px;
+}
+
+.webcam-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+
+  mat-icon {
+    color: var(--mat-app-primary, #1976d2);
+  }
+}
+
+.webcam-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.webcam-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Visor de cámara ─────────────────────────────────────────────────────────
+
+.camera-box {
+  display: grid;
+  gap: 12px;
+}
+
+.camera-feed {
+  width: 100%;
+  border-radius: 6px;
+  background: #000;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.camera-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.4);
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.camera-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hidden {
+  display: none;
+}
+
+// ── Grid de fotos capturadas ─────────────────────────────────────────────────
+
+.fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+.foto-preview {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.foto-delete {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
+}
+
+.fotos-empty {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.45);
+  align-self: center;
+}
+
+// ── Tabs de modo ─────────────────────────────────────────────────────────────
+
+.modo-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  transition: color 0.15s, border-color 0.15s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover { color: #1976d2; }
+
+  &.activo {
+    color: #1976d2;
+    border-bottom-color: #1976d2;
+    font-weight: 600;
+  }
+}
+
+// ── Zona de subida ───────────────────────────────────────────────────────────
+
+.subir-layout {
+  display: grid;
+  gap: 16px;
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 36px 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: #1976d2;
+    background: rgba(25, 118, 210, 0.04);
+  }
+
+  .drop-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: rgba(0, 0, 0, 0.35);
+  }
+}
+
+.drop-texto {
+  margin: 0;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.drop-sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+// ── Advertencia ──────────────────────────────────────────────────────────────
+
+.webcam-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.85rem;
+  color: #e65100;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

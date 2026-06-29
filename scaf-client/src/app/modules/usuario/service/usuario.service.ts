@@ -47,4 +47,8 @@ export class UsuarioService {
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  subirRostros(id: number, formData: FormData): Observable<{ rostrosGuardados: number }> {
+    return this.http.post<{ rostrosGuardados: number }>(`${this.apiUrl}/${id}/rostros`, formData);
+  }
 }

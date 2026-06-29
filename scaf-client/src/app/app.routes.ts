@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './core/guards/auth.guard';
+import { rolGuard } from './core/guards/rol.guard';
 import { Layout } from './layout/component/layout/layout';
 import { AsignacionCrearComponent } from './modules/asignacion/components/asignacion-crear/asignacion-crear';
 import { AsignacionEditarComponent } from './modules/asignacion/components/asignacion-editar/asignacion-editar';
@@ -13,6 +15,14 @@ import { CicloAcademicoListComponent } from './modules/ciclo-academico/component
 import { CursoCrearComponent } from './modules/curso/components/curso-crear/curso-crear';
 import { CursoEditarComponent } from './modules/curso/components/curso-editar/curso-editar';
 import { CursoListComponent } from './modules/curso/components/curso-list/curso-list';
+import { DocenteLayoutComponent } from './modules/docente/components/docente-layout/docente-layout';
+import { DocenteCursosComponent } from './modules/docente/components/docente-cursos/docente-cursos';
+import { DocenteCursoDetalleComponent } from './modules/docente/components/docente-curso-detalle/docente-curso-detalle';
+import { EstudianteLayoutComponent } from './modules/estudiante/components/estudiante-layout/estudiante-layout';
+import { EstudianteCursosComponent } from './modules/estudiante/components/estudiante-cursos/estudiante-cursos';
+import { EstudianteHorarioComponent } from './modules/estudiante/components/estudiante-horario/estudiante-horario';
+import { EstudianteAsistenciasComponent } from './modules/estudiante/components/estudiante-asistencias/estudiante-asistencias';
+import { RegistroRostroComponent } from './modules/estudiante/components/registro-rostro/registro-rostro';
 import { HorarioCrearComponent } from './modules/horario/components/horario-crear/horario-crear';
 import { HorarioEditarComponent } from './modules/horario/components/horario-editar/horario-editar';
 import { HorarioListComponent } from './modules/horario/components/horario-list/horario-list';
@@ -26,14 +36,16 @@ import { UsuarioCrearComponent } from './modules/usuario/components/usuario-crea
 import { UsuarioEditarComponent } from './modules/usuario/components/usuario-editar/usuario-editar';
 import { UsuarioListComponent } from './modules/usuario/components/usuario-list/usuario-list';
 import { Login } from './security/component/login/login';
-import { AsistenciaComponent } from './modules/asistencia/components/asistencia/asistencia';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: Login },
+
+  // ── Portal Administrativo ───────────────────────────────────────────────────
   {
     path: 'layout',
     component: Layout,
+    canActivate: [authGuard, rolGuard('ADMINISTRADOR')],
     children: [
       { path: '', redirectTo: 'carreras', pathMatch: 'full' },
       { path: 'carreras', component: CarreraGestionComponent },
@@ -60,8 +72,40 @@ export const routes: Routes = [
       { path: 'inscripciones', component: InscripcionListComponent },
       { path: 'inscripciones/crear', component: InscripcionCrearComponent },
       { path: 'inscripciones/editar/:id', component: InscripcionEditarComponent },
-      { path: 'asistencia', component: AsistenciaComponent },
     ],
   },
+
+  // ── Portal Estudiante ───────────────────────────────────────────────────────
+  {
+    path: 'estudiante',
+    component: EstudianteLayoutComponent,
+    canActivate: [authGuard, rolGuard('Estudiante')],
+    children: [
+      { path: '', redirectTo: 'cursos', pathMatch: 'full' },
+      { path: 'cursos', component: EstudianteCursosComponent },
+      { path: 'horario', component: EstudianteHorarioComponent },
+      { path: 'asistencias', component: EstudianteAsistenciasComponent },
+    ],
+  },
+
+  // Registro de rostro: estudiante autenticado sin fotos registradas
+  {
+    path: 'registro-rostro',
+    component: RegistroRostroComponent,
+    canActivate: [authGuard, rolGuard('Estudiante')],
+  },
+
+  // ── Portal Docente ──────────────────────────────────────────────────────────
+  {
+    path: 'docente',
+    component: DocenteLayoutComponent,
+    canActivate: [authGuard, rolGuard('Docente')],
+    children: [
+      { path: '', redirectTo: 'cursos', pathMatch: 'full' },
+      { path: 'cursos', component: DocenteCursosComponent },
+      { path: 'cursos/:codigoAsignacion', component: DocenteCursoDetalleComponent },
+    ],
+  },
+
   { path: '**', redirectTo: '/login' },
 ];

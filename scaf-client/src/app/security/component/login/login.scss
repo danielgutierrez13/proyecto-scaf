@@ -103,6 +103,16 @@
   }
 }
 
+.form-error-global {
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
 .form-error {
   font-size: 12px;
   color: #e74c3c;

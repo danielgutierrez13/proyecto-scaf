@@ -1,0 +1,30 @@
+<section class="page-section">
+  <h2 class="page-title">Mis Cursos — Ciclo Vigente</h2>
+
+  @if (cargando) {
+    <p class="estado-msg">Cargando cursos...</p>
+  } @else if (error) {
+    <p class="estado-msg error">{{ error }}</p>
+  } @else if (cursos().length === 0) {
+    <p class="estado-msg">No tienes cursos asignados en el ciclo vigente. Verifica en el panel administrativo que exista un ciclo académico con estado <strong>vigente</strong> y que tengas asignaciones en él.</p>
+  } @else {
+    <div class="cursos-lista">
+      @for (curso of cursos(); track curso.codigoAsignacion) {
+        <div class="curso-card">
+          <div class="curso-info">
+            <div class="curso-nombre">{{ curso.nombreCurso }}</div>
+            <div class="curso-meta">
+              <span class="tag">{{ curso.creditosCurso }} créditos</span>
+              <span>{{ curso.diaHorario }} · {{ curso.horaInicio }}–{{ curso.horaFin }}</span>
+              <span>Aula {{ curso.aula }}</span>
+            </div>
+          </div>
+
+          <a class="btn-ver" [routerLink]="['/docente/cursos', curso.codigoAsignacion]">
+            Ver curso →
+          </a>
+        </div>
+      }
+    </div>
+  }
+</section>

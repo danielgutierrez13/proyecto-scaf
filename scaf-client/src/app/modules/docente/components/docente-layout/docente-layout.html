@@ -1,0 +1,34 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">SC</div>
+      <div class="brand-info">
+        <strong>SCAF</strong>
+        <span>Panel docente</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-link" routerLink="cursos" routerLinkActive="active">
+        <span class="nav-icon">DC</span>
+        <span>Mis Cursos</span>
+      </a>
+    </nav>
+
+    @if (usuario(); as u) {
+      <div class="sidebar-card">
+        <p class="user-name">{{ u.nombres }} {{ u.apellidos }}</p>
+        <p class="user-code">{{ u.codigoUniversitario }}</p>
+      </div>
+    }
+
+    <button class="btn-logout" type="button" (click)="cerrarSesion()">
+      <span class="nav-icon">↩</span>
+      <span>Cerrar sesión</span>
+    </button>
+  </aside>
+
+  <main class="main">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,101 @@
+<div class="detalle-page">
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando curso...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (curso(); as c) {
+
+    <div class="page-header">
+      <a class="btn-volver" routerLink="/docente/cursos">← Volver a mis cursos</a>
+      <h1 class="page-title">{{ c.nombreCurso }}</h1>
+      <p class="page-sub">{{ c.descripcionCicloAcademico }}</p>
+    </div>
+
+    <div class="bloques">
+
+      <!-- ── Bloque 1: Contenido del curso ───────────────────────────────── -->
+      <section class="bloque">
+        <h2 class="bloque-titulo">Contenido del Curso</h2>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Curso</span>
+            <span class="info-valor">{{ c.nombreCurso }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Créditos</span>
+            <span class="info-valor">{{ c.creditosCurso }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Día</span>
+            <span class="info-valor">{{ c.diaHorario }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Horario</span>
+            <span class="info-valor">{{ c.horaInicio }} – {{ c.horaFin }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Aula</span>
+            <span class="info-valor">{{ c.aula }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Docente</span>
+            <span class="info-valor">{{ c.nombreDocente }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Bloque 2: Registrar asistencia ──────────────────────────────── -->
+      <section class="bloque">
+        <h2 class="bloque-titulo">Registrar Asistencia</h2>
+        <p class="bloque-sub">
+          Activa la cámara, apunta al estudiante y presiona <strong>Escanear</strong>.
+          El sistema reconocerá el rostro y registrará la asistencia automáticamente.
+        </p>
+
+        @if (!camaraActiva()) {
+          <button class="btn-primary" type="button" (click)="iniciarCamara()">
+            ▶ Activar cámara
+          </button>
+        } @else {
+          <div class="scanner-layout">
+            <div class="scanner-camara">
+              <video #videoElement autoplay playsinline class="scanner-feed"></video>
+              <canvas #canvasElement class="canvas-hidden"></canvas>
+            </div>
+
+            <div class="scanner-controles">
+              <p class="scanner-instruccion">
+                Centra el rostro del estudiante en la imagen y presiona <strong>Escanear</strong>.
+              </p>
+
+              <div class="scanner-acciones">
+                <button
+                  class="btn-primary"
+                  type="button"
+                  [disabled]="escaneando()"
+                  (click)="capturarYReconocer()"
+                >
+                  {{ escaneando() ? 'Procesando...' : '🔍 Escanear rostro' }}
+                </button>
+
+                <button class="btn-secondary" type="button" (click)="cerrarCamara()">
+                  ⏹ Detener cámara
+                </button>
+              </div>
+
+              @if (resultado()) {
+                <div class="resultado" [class.exito]="resultado()!.startsWith('✅')">
+                  {{ resultado() }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </section>
+
+    </div>
+  }
+
+</div>

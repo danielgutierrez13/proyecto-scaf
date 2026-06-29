@@ -68,7 +68,7 @@ export class InscripcionCrearComponent implements OnInit {
   }
 
   private cargarCatalogos(): void {
-    this.usuarioService.listar(0, 100).subscribe({
+    this.usuarioService.listarPorRol(0, 100, 'Estudiante').subscribe({
       next: (response) => this.estudiantes.set(response.lista ?? []),
       error: () => this.error = 'No se pudieron cargar los estudiantes.',
     });

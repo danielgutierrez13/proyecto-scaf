@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface MenuItem {
   label: string;
@@ -15,6 +16,14 @@ interface MenuItem {
   styleUrl: './layout.scss',
 })
 export class Layout {
+  private readonly authService = inject(AuthService);
+  private readonly router      = inject(Router);
+
+  protected cerrarSesion(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   protected readonly menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'IN', route: '/layout' },
     {
@@ -35,9 +44,7 @@ export class Layout {
         { label: 'Ciclo Academico', icon: 'S2', route: '/layout/ciclos-academicos' },
         { label: 'Asignacion', icon: 'S2', route: '/layout/asignaciones' },
         { label: 'Inscripciones', icon: 'S5', route: '/layout/inscripciones' },
-        { label: 'Asistencia', icon: 'S6', route: '/layout/asistencia' },
       ],
     },
-    { label: 'Reportes', icon: 'RE' },
   ];
 }

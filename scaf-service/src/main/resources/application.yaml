@@ -16,3 +16,17 @@ spring:
   devtools:
     restart:
       enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+jwt:
+  # Clave Base64 >= 256 bits. Cámbiala antes de pasar a producción.
+  secret: c2NhZi1zZWN1cml0eS1zZWNyZXQta2V5LXV0cC0yMDI2LXN5c3RlbWE=
+  expiration: 86400000
+
+faces:
+  storage:
+    path: ./faces
+    url: http://localhost:9091/faces

@@ -5,29 +5,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pe.utp.dto.PaginateResponseDto;
 import pe.utp.dto.asistencia.AsistenciaRequestDto;
 import pe.utp.dto.asistencia.AsistenciaResponseDto;
+import pe.utp.dto.asistencia.ReconocimientoRequestDto;
+import pe.utp.dto.asistencia.ReconocimientoResponseDto;
+import pe.utp.repository.model.Usuario;
 import pe.utp.service.AsistenciaService;
+import pe.utp.service.RostroService;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/asistencias")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AsistenciaController {
 
     private final AsistenciaService asistenciaService;
+    private final RostroService rostroService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -64,5 +65,42 @@ public class AsistenciaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
         asistenciaService.eliminar(id);
+    }
+
+    /**
+     * Recibe un frame de la cÃ¡mara, identifica al estudiante con LBPH
+     * y registra su asistencia automÃ¡ticamente.
+     */
+    @PostMapping("/reconocer")
+    @ResponseStatus(HttpStatus.OK)
+    public ReconocimientoResponseDto reconocer(@RequestBody ReconocimientoRequestDto request) throws IOException {
+        byte[] bytes = Base64.getDecoder().decode(request.getImagenBase64());
+
+        Optional<Usuario> reconocido = rostroService.reconocerEstudiante(
+                request.getCodigoAsignacion(), bytes);
+
+        if (reconocido.isEmpty()) {
+            return new ReconocimientoResponseDto("NO_RECONOCIDO", "Rostro no reconocido.", null, null, null);
+        }
+
+        Usuario estudiante = reconocido.get();
+        String horaIngreso = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        // Registrar asistencia automÃ¡ticamente
+        AsistenciaRequestDto asistenciaDto = new AsistenciaRequestDto();
+        asistenciaDto.setCodigoUsuario(estudiante.getCodigoUsusario());
+        asistenciaDto.setCodigoAsignacion(request.getCodigoAsignacion());
+        asistenciaDto.setFecha(LocalDate.now());
+        asistenciaDto.setHoraIngreso(horaIngreso);
+        asistenciaDto.setEstado(true);
+        asistenciaService.crear(asistenciaDto);
+
+        return new ReconocimientoResponseDto(
+                "RECONOCIDO",
+                "Asistencia registrada correctamente.",
+                estudiante.getCodigoUsusario(),
+                estudiante.getNombres() + " " + estudiante.getApellidos(),
+                horaIngreso
+        );
     }
 }

@@ -2,12 +2,9 @@
 
   <div class="page-header">
     <h2>Tomar Asistencia</h2>
-    @if (modoDemo()) {
-      <div class="demo-badge">🧪 MODO DEMO — Backend no disponible</div>
-    }
   </div>
 
-  <!-- Selector de curso -->
+  <!-- Selector de asignación -->
   <mat-card class="selector-card">
     <mat-card-header>
       <mat-card-title>1. Selecciona la asignación</mat-card-title>
@@ -17,9 +14,9 @@
         <mat-label>Asignación</mat-label>
         <mat-select [(ngModel)]="codigoAsignacionSeleccionada" (ngModelChange)="reiniciar()">
           <mat-option [value]="null">— Seleccionar —</mat-option>
-          @for (asignacion of asignaciones(); track asignacion.codigoAsignacion) {
-            <mat-option [value]="asignacion.codigoAsignacion">
-              {{ asignacion.nombreCurso }} - {{ asignacion.diaHorario }} - {{ asignacion.descripcionCicloAcademico }}
+          @for (a of asignaciones(); track a.codigoAsignacion) {
+            <mat-option [value]="a.codigoAsignacion">
+              {{ a.nombreCurso }} · {{ a.diaHorario }} · {{ a.descripcionCicloAcademico }}
             </mat-option>
           }
         </mat-select>
@@ -27,33 +24,27 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Sección cámara -->
+  <!-- Cámara -->
   @if (codigoAsignacionSeleccionada) {
     <mat-card class="camera-card">
       <mat-card-header>
         <mat-card-title>2. Captura de rostro</mat-card-title>
         <mat-card-subtitle>El sistema usará OpenCV para identificar al estudiante</mat-card-subtitle>
       </mat-card-header>
-
       <mat-card-content>
 
-        <!-- Estado: sin cámara y sin imagen capturada -->
-        @if (!camaraActiva && !imagenCapturada && !procesando && !resultado()) {
+        @if (!camaraActiva && !procesando && !resultado()) {
           <div class="camera-placeholder">
             <div class="camera-icon">📷</div>
             <p>Presiona el botón para activar la cámara</p>
-            <button mat-flat-button (click)="abrirCamara()">
-              Activar cámara
-            </button>
+            <button mat-flat-button (click)="abrirCamara()">Activar cámara</button>
           </div>
         }
 
-        <!-- Error de cámara -->
         @if (errorCamara) {
           <div class="alert alert-error">{{ errorCamara }}</div>
         }
 
-        <!-- Preview en vivo de la cámara -->
         @if (camaraActiva) {
           <div class="video-wrapper">
             <div class="face-guide-overlay">
@@ -64,44 +55,29 @@
               <button mat-flat-button color="primary" (click)="capturarFrame()">
                 📸 Capturar y verificar
               </button>
-              <button mat-stroked-button (click)="detenerCamara()">
-                Cancelar
-              </button>
+              <button mat-stroked-button (click)="detenerCamara()">Cancelar</button>
             </div>
           </div>
         }
 
-        <!-- Canvas oculto para captura -->
         <canvas #canvasEl style="display: none;"></canvas>
 
-        <!-- Imagen capturada -->
-        @if (imagenCapturada && !resultado()) {
-          <div class="captured-preview">
-            <img [src]="imagenCapturada" alt="Imagen capturada" class="captured-img" />
-            @if (procesando) {
-              <div class="processing-overlay">
-                <mat-spinner diameter="48"></mat-spinner>
-                <p>Analizando rostro con OpenCV...</p>
-              </div>
-            }
+        @if (procesando) {
+          <div class="processing">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Analizando rostro con OpenCV...</p>
           </div>
         }
 
-        <!-- Resultado de asistencia -->
         @if (resultado(); as res) {
           <div class="resultado-container">
-            @if (imagenCapturada) {
-              <img [src]="imagenCapturada" alt="Foto tomada" class="captured-img small" />
-            }
             <div class="resultado-card" [class]="'estado-' + res.estado.toLowerCase()">
-              <div class="resultado-icon">{{ iconoEstado(res.estado) }}</div>
+              <div class="resultado-icon">
+                {{ res.estado === 'REGISTRADO' ? '✅' : '❌' }}
+              </div>
               <div class="resultado-body">
                 <strong class="resultado-titulo">
-                  @switch (res.estado) {
-                    @case ('RECONOCIDO') { Rostro reconocido }
-                    @case ('NO_RECONOCIDO') { Rostro no reconocido }
-                    @default { Error en el proceso }
-                  }
+                  {{ res.estado === 'REGISTRADO' ? 'Asistencia registrada' : 'No reconocido' }}
                 </strong>
                 <p>{{ res.mensaje }}</p>
                 @if (res.nombreEstudiante) {
@@ -112,11 +88,8 @@
                 }
               </div>
             </div>
-
             <div class="result-actions">
-              <button mat-flat-button (click)="abrirCamara()">
-                📷 Nuevo intento
-              </button>
+              <button mat-flat-button (click)="abrirCamara()">📷 Nuevo intento</button>
             </div>
           </div>
         }
@@ -125,17 +98,15 @@
     </mat-card>
   }
 
-  <!-- Instrucciones -->
   <mat-card class="info-card">
     <mat-card-content>
       <h4>ℹ️ ¿Cómo funciona?</h4>
       <ol>
-        <li>Selecciona la asignación a la que deseas registrar asistencia.</li>
-        <li>Activa la cámara y centra tu rostro en el óvalo guía.</li>
-        <li>Presiona <strong>Capturar y verificar</strong> — el sistema enviará la imagen al backend.</li>
-        <li>OpenCV analizará el rostro y devolverá el resultado en segundos.</li>
+        <li>Selecciona la asignación.</li>
+        <li>Activa la cámara y centra el rostro del estudiante en el óvalo.</li>
+        <li>Presiona <strong>Capturar y verificar</strong>.</li>
+        <li>OpenCV identificará al estudiante y registrará su asistencia automáticamente.</li>
       </ol>
-      <p class="info-note">Para que el reconocimiento funcione, el estudiante debe tener su rostro registrado al momento de su creación.</p>
     </mat-card-content>
   </mat-card>
 

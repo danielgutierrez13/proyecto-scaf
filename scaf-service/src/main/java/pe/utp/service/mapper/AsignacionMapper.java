@@ -36,11 +36,15 @@ public class AsignacionMapper {
         if (asignacion.getCurso() != null) {
             responseDto.setCodigoCurso(asignacion.getCurso().getCodigoCurso());
             responseDto.setNombreCurso(asignacion.getCurso().getNombre());
+            responseDto.setCreditosCurso(asignacion.getCurso().getCreditos());
         }
 
         if (asignacion.getHorario() != null) {
             responseDto.setCodigoHorario(asignacion.getHorario().getCodigoHorario());
             responseDto.setDiaHorario(asignacion.getHorario().getDia());
+            responseDto.setHoraInicio(asignacion.getHorario().getHoraInicio());
+            responseDto.setHoraFin(asignacion.getHorario().getHoraFin());
+            responseDto.setAula(asignacion.getHorario().getAula());
         }
 
         if (asignacion.getCicloAcademico() != null) {

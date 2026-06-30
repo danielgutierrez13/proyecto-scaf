@@ -1,5 +1,6 @@
 package pe.utp.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,18 +43,27 @@ public class CicloAcademicoServiceImpl implements CicloAcademicoService {
     }
 
     @Override
-    public CicloAcademicoResponseDto crear(CicloAcademicoRequestDto cicloAcademicoRequestDto) {
+    @Transactional
+    public CicloAcademicoResponseDto crear(CicloAcademicoRequestDto requestDto) {
+        if (Boolean.TRUE.equals(requestDto.getVigente())) {
+            cicloAcademicoRepository.desactivarTodos();
+        }
         CicloAcademico cicloAcademico = new CicloAcademico();
-        cicloAcademicoMapper.actualizarEntidad(cicloAcademico, cicloAcademicoRequestDto);
+        cicloAcademicoMapper.actualizarEntidad(cicloAcademico, requestDto);
         return cicloAcademicoMapper.toResponseDto(cicloAcademicoRepository.save(cicloAcademico));
     }
 
     @Override
-    public CicloAcademicoResponseDto actualizar(Long id, CicloAcademicoRequestDto cicloAcademicoRequestDto) {
-        CicloAcademico cicloAcademicoExistente = cicloAcademicoRepository.findById(id)
+    @Transactional
+    public CicloAcademicoResponseDto actualizar(Long id, CicloAcademicoRequestDto requestDto) {
+        CicloAcademico existente = cicloAcademicoRepository.findById(id)
                 .orElseThrow(() -> ScafException.of(CodigoError.CICLO_ACADEMICO_NO_ENCONTRADO));
-        cicloAcademicoMapper.actualizarEntidad(cicloAcademicoExistente, cicloAcademicoRequestDto);
-        return cicloAcademicoMapper.toResponseDto(cicloAcademicoRepository.save(cicloAcademicoExistente));
+
+        if (Boolean.TRUE.equals(requestDto.getVigente())) {
+            cicloAcademicoRepository.desactivarTodos();
+        }
+        cicloAcademicoMapper.actualizarEntidad(existente, requestDto);
+        return cicloAcademicoMapper.toResponseDto(cicloAcademicoRepository.save(existente));
     }
 
     @Override

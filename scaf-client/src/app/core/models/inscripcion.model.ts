@@ -9,4 +9,11 @@ export interface InscripcionResponse {
   nombreEstudiante: string;
   codigoAsignacion: number;
   nombreCurso: string;
+  creditosCurso: number;
+  nombreDocente: string;
+  dia: string;
+  horaInicio: string;
+  horaFin: string;
+  aula: string;
+  descripcionCiclo: string;
 }

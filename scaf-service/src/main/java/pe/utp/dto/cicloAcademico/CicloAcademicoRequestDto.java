@@ -14,4 +14,5 @@ public class CicloAcademicoRequestDto {
     private int anio;
     private int semestre;
     private String descripcion;
+    private Boolean vigente = false;
 }

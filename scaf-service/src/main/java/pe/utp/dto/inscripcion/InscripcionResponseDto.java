@@ -11,7 +11,14 @@ import lombok.Setter;
         "codigoEstudiante",
         "nombreEstudiante",
         "codigoAsignacion",
-        "nombreCurso"
+        "nombreCurso",
+        "creditosCurso",
+        "nombreDocente",
+        "dia",
+        "horaInicio",
+        "horaFin",
+        "aula",
+        "descripcionCiclo"
 })
 public class InscripcionResponseDto {
 
@@ -20,4 +27,11 @@ public class InscripcionResponseDto {
     private String nombreEstudiante;
     private Long codigoAsignacion;
     private String nombreCurso;
+    private Integer creditosCurso;
+    private String nombreDocente;
+    private String dia;
+    private String horaInicio;
+    private String horaFin;
+    private String aula;
+    private String descripcionCiclo;
 }

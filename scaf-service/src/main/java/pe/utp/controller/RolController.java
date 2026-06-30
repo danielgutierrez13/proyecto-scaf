@@ -14,7 +14,6 @@ import pe.utp.service.RolService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/roles")
-@CrossOrigin(origins = "http://localhost:4200")
 public class RolController {
 
     private final RolService rolService;

@@ -10,7 +10,8 @@ import lombok.Setter;
         "codigoCicloAcademico",
         "anio",
         "semestre",
-        "descripcion"
+        "descripcion",
+        "vigente"
 })
 public class CicloAcademicoResponseDto {
 
@@ -18,4 +19,5 @@ public class CicloAcademicoResponseDto {
     private int anio;
     private int semestre;
     private String descripcion;
+    private Boolean vigente;
 }

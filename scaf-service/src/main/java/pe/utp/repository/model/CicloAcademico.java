@@ -32,4 +32,7 @@ public class CicloAcademico {
 
     @Column(name = "descripcion")
     private String descripcion;
+
+    @Column(name = "vigente")
+    private Boolean vigente = false;
 }

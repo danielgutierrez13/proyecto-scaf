@@ -2,6 +2,7 @@ export interface CicloAcademicoRequest {
   anio: number;
   semestre: number;
   descripcion: string;
+  vigente: boolean;
 }
 
 export interface CicloAcademicoResponse {
@@ -9,4 +10,5 @@ export interface CicloAcademicoResponse {
   anio: number;
   semestre: number;
   descripcion: string;
+  vigente: boolean;
 }

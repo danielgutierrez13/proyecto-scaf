@@ -15,21 +15,41 @@ public class InscripcionMapper {
     }
 
     public InscripcionResponseDto toResponseDto(Inscripcion inscripcion) {
-        InscripcionResponseDto responseDto = new InscripcionResponseDto();
-        responseDto.setCodigoInscripcion(inscripcion.getCodigoInscripcion());
+        InscripcionResponseDto dto = new InscripcionResponseDto();
+        dto.setCodigoInscripcion(inscripcion.getCodigoInscripcion());
 
         if (inscripcion.getEstudiante() != null) {
-            responseDto.setCodigoEstudiante(inscripcion.getEstudiante().getCodigoUsusario());
-            responseDto.setNombreEstudiante(inscripcion.getEstudiante().getNombres());
+            dto.setCodigoEstudiante(inscripcion.getEstudiante().getCodigoUsusario());
+            dto.setNombreEstudiante(
+                    inscripcion.getEstudiante().getNombres() + " " + inscripcion.getEstudiante().getApellidos());
         }
 
-        if (inscripcion.getAsignacion() != null) {
-            responseDto.setCodigoAsignacion(inscripcion.getAsignacion().getCodigoAsignacion());
-            if (inscripcion.getAsignacion().getCurso() != null) {
-                responseDto.setNombreCurso(inscripcion.getAsignacion().getCurso().getNombre());
+        Asignacion asignacion = inscripcion.getAsignacion();
+        if (asignacion != null) {
+            dto.setCodigoAsignacion(asignacion.getCodigoAsignacion());
+
+            if (asignacion.getCurso() != null) {
+                dto.setNombreCurso(asignacion.getCurso().getNombre());
+                dto.setCreditosCurso(asignacion.getCurso().getCreditos());
+            }
+
+            if (asignacion.getDocente() != null) {
+                dto.setNombreDocente(
+                        asignacion.getDocente().getNombres() + " " + asignacion.getDocente().getApellidos());
+            }
+
+            if (asignacion.getHorario() != null) {
+                dto.setDia(asignacion.getHorario().getDia());
+                dto.setHoraInicio(asignacion.getHorario().getHoraInicio());
+                dto.setHoraFin(asignacion.getHorario().getHoraFin());
+                dto.setAula(asignacion.getHorario().getAula());
+            }
+
+            if (asignacion.getCicloAcademico() != null) {
+                dto.setDescripcionCiclo(asignacion.getCicloAcademico().getDescripcion());
             }
         }
 
-        return responseDto;
+        return dto;
     }
 }

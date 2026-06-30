@@ -11,8 +11,12 @@ export interface AsignacionResponse {
   nombreDocente: string;
   codigoCurso: number;
   nombreCurso: string;
+  creditosCurso: number;
   codigoHorario: number;
   diaHorario: string;
+  horaInicio: string;
+  horaFin: string;
+  aula: string;
   codigoCicloAcademico: number;
   descripcionCicloAcademico: string;
 }

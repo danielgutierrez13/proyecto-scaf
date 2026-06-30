@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,7 +12,7 @@ import { CicloAcademicoService } from '../../service/ciclo-academico.service';
 
 @Component({
   selector: 'app-ciclo-academico-editar',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './ciclo-academico-editar.html',
   styleUrl: './ciclo-academico-editar.scss',
 })
@@ -25,6 +26,7 @@ export class CicloAcademicoEditarComponent implements OnInit {
     anio: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2100)]],
     semestre: [1, [Validators.required, Validators.min(1), Validators.max(2)]],
     descripcion: ['', [Validators.required, Validators.maxLength(160)]],
+    vigente: [false],
   });
 
   protected readonly cargando = signal(true);
@@ -81,6 +83,7 @@ export class CicloAcademicoEditarComponent implements OnInit {
           anio: Number(ciclo.anio),
           semestre: Number(ciclo.semestre),
           descripcion: ciclo.descripcion ?? '',
+          vigente: ciclo.vigente ?? false,
         });
       },
       error: () => {

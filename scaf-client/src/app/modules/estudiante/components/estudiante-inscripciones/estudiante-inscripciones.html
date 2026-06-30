@@ -1,0 +1,54 @@
+<section class="page-section">
+  <h2 class="page-title">Inscripciones — Ciclo Vigente</h2>
+  <p class="page-sub">Cursos disponibles para tu carrera en el ciclo actual.</p>
+
+  @if (mensajeExito) {
+    <div class="alerta exito">{{ mensajeExito }}</div>
+  }
+  @if (error) {
+    <div class="alerta error">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <p class="estado-msg">Cargando cursos disponibles...</p>
+  } @else if (disponibles().length === 0) {
+    <p class="estado-msg">No hay cursos disponibles para inscribirte en este ciclo.</p>
+  } @else {
+    <div class="tabla-wrapper">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Curso</th>
+            <th>Créditos</th>
+            <th>Docente</th>
+            <th>Día</th>
+            <th>Horario</th>
+            <th>Aula</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of disponibles(); track a.codigoAsignacion) {
+            <tr>
+              <td>{{ a.nombreCurso }}</td>
+              <td>{{ a.creditosCurso }}</td>
+              <td>{{ a.nombreDocente }}</td>
+              <td>{{ a.diaHorario }}</td>
+              <td>{{ a.horaInicio }} – {{ a.horaFin }}</td>
+              <td>{{ a.aula }}</td>
+              <td>
+                <button
+                  class="btn-inscribir"
+                  [disabled]="inscribiendose === a.codigoAsignacion"
+                  (click)="inscribirse(a.codigoAsignacion)"
+                >
+                  {{ inscribiendose === a.codigoAsignacion ? 'Inscribiendo...' : 'Inscribirme' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

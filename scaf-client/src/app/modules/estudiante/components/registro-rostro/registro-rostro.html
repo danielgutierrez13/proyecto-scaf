@@ -1,0 +1,120 @@
+<div class="registro-page">
+  <div class="registro-card">
+
+    <div class="card-header">
+      <h1 class="card-title">Registro de rostro</h1>
+      <p class="card-sub">
+        Para acceder al sistema necesitas registrar al menos 1 foto de tu rostro
+        (máximo {{ MAX_FOTOS }}). Puedes tomarlas con la cámara o subir fotos desde tu dispositivo.
+      </p>
+    </div>
+
+    <!-- Selector de modo -->
+    <div class="modo-tabs">
+      <button
+        class="tab-btn"
+        [class.activo]="modo() === 'camara'"
+        (click)="seleccionarModo('camara')"
+      >
+        📷 Usar cámara
+      </button>
+      <button
+        class="tab-btn"
+        [class.activo]="modo() === 'subir'"
+        (click)="seleccionarModo('subir')"
+      >
+        📁 Subir fotos
+      </button>
+    </div>
+
+    @if (error) {
+      <div class="alerta error">{{ error }}</div>
+    }
+
+    <div class="contenido-modo">
+
+      <!-- ── MODO CÁMARA ── -->
+      @if (modo() === 'camara') {
+        <div class="webcam-layout">
+          <div class="camera-box">
+            <video #videoElement autoplay playsinline class="camera-feed"></video>
+            <canvas #canvasElement class="canvas-hidden"></canvas>
+            <button
+              class="btn-capturar"
+              [disabled]="!camaraActiva || fotos().length >= MAX_FOTOS"
+              (click)="capturarFoto()"
+            >
+              📸 Capturar ({{ fotos().length }}/{{ MAX_FOTOS }})
+            </button>
+          </div>
+
+          <div class="fotos-panel">
+            <p class="fotos-label">Fotos capturadas</p>
+            <div class="fotos-grid">
+              @for (foto of fotos(); track $index) {
+                <div class="foto-item">
+                  <img [src]="foto" alt="Foto {{ $index + 1 }}" class="foto-img">
+                  <button class="foto-delete" (click)="eliminarFoto($index)" title="Eliminar">✕</button>
+                </div>
+              }
+              @if (fotos().length === 0) {
+                <p class="fotos-empty">Captura al menos una foto.</p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ── MODO SUBIR ── -->
+      @if (modo() === 'subir') {
+        <div class="subir-layout">
+
+          <!-- Input oculto -->
+          <input
+            #archivoInput
+            type="file"
+            accept="image/*"
+            multiple
+            class="input-hidden"
+            (change)="onArchivosSeleccionados($event)"
+          >
+
+          <div class="drop-zone" (click)="abrirSelector()">
+            <span class="drop-icon">🖼️</span>
+            <p class="drop-texto">Haz clic para seleccionar fotos</p>
+            <p class="drop-sub">JPG, PNG, WEBP · máx. {{ MAX_FOTOS }} imágenes</p>
+            <button class="btn-seleccionar" type="button" (click)="$event.stopPropagation(); abrirSelector()">
+              Seleccionar archivos
+            </button>
+          </div>
+
+          @if (fotos().length > 0) {
+            <div class="fotos-panel">
+              <p class="fotos-label">Fotos seleccionadas ({{ fotos().length }}/{{ MAX_FOTOS }})</p>
+              <div class="fotos-grid">
+                @for (foto of fotos(); track $index) {
+                  <div class="foto-item">
+                    <img [src]="foto" alt="Foto {{ $index + 1 }}" class="foto-img">
+                    <button class="foto-delete" (click)="eliminarFoto($index)" title="Eliminar">✕</button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+
+    <div class="card-footer">
+      <button
+        class="btn-guardar"
+        [disabled]="fotos().length === 0 || guardando"
+        (click)="guardar()"
+      >
+        {{ guardando ? 'Guardando...' : 'Guardar y continuar' }}
+      </button>
+    </div>
+
+  </div>
+</div>

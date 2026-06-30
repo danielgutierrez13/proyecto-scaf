@@ -1,0 +1,28 @@
+<section class="page-section">
+  <h2 class="page-title">Mis Asistencias</h2>
+  <p class="page-sub">Total de asistencias registradas por curso.</p>
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando asistencias...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (asistencias().length === 0) {
+    <p class="estado-msg">No tienes asistencias registradas aún.</p>
+  } @else {
+    <div class="cards-grid">
+      @for (a of asistencias(); track a.codigoAsignacion) {
+        <div class="asistencia-card">
+          <div class="card-top">
+            <span class="curso-nombre">{{ a.nombreCurso }}</span>
+            <span class="badge">{{ a.totalAsistencias }} asistencia{{ a.totalAsistencias !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="card-meta">
+            <span>{{ a.diaHorario }}</span>
+            <span>{{ a.horaInicio }} – {{ a.horaFin }}</span>
+            <span>Aula {{ a.aula }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

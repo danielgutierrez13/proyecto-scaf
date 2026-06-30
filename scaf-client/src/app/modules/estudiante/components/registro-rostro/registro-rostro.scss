@@ -1,0 +1,207 @@
+.registro-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 24px;
+}
+
+.registro-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.1);
+  padding: 32px;
+  width: 100%;
+  max-width: 860px;
+  display: grid;
+  gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.card-header  { display: grid; gap: 6px; }
+.card-title   { margin: 0; font-size: 1.5rem; font-weight: 700; color: #1a237e; }
+.card-sub     { margin: 0; color: rgba(0,0,0,.55); font-size: 0.9rem; line-height: 1.5; }
+
+// ── Tabs de modo ──────────────────────────────────────────────────────────────
+
+.modo-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 10px 22px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(0,0,0,.55);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: color .15s, border-color .15s;
+
+  &:hover { color: #1a237e; }
+
+  &.activo {
+    color: #1a237e;
+    border-bottom-color: #1a237e;
+    font-weight: 600;
+  }
+}
+
+// ── Alerta ────────────────────────────────────────────────────────────────────
+
+.alerta.error {
+  padding: 10px 16px;
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+// ── Modo cámara ───────────────────────────────────────────────────────────────
+
+.webcam-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+}
+
+.camera-box { display: flex; flex-direction: column; gap: 12px; }
+
+.camera-feed {
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.canvas-hidden { display: none; }
+
+.btn-capturar {
+  width: 100%;
+  padding: 10px;
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background .15s;
+
+  &:hover:not(:disabled) { background: #283593; }
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+
+// ── Modo subir ────────────────────────────────────────────────────────────────
+
+.subir-layout { display: grid; gap: 20px; }
+
+.input-hidden { display: none; }
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed #c5cae9;
+  border-radius: 12px;
+  padding: 40px 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .2s, background .2s;
+
+  &:hover {
+    border-color: #3949ab;
+    background: #f5f7ff;
+  }
+}
+
+.drop-icon  { font-size: 2.5rem; line-height: 1; }
+.drop-texto { margin: 0; font-weight: 600; color: rgba(0,0,0,.7); }
+.drop-sub   { margin: 0; font-size: 0.82rem; color: rgba(0,0,0,.45); }
+
+.btn-seleccionar {
+  margin-top: 4px;
+  padding: 8px 22px;
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background .15s;
+
+  &:hover { background: #283593; }
+}
+
+// ── Galería compartida ────────────────────────────────────────────────────────
+
+.fotos-panel  { display: grid; gap: 10px; align-content: start; }
+.fotos-label  { margin: 0; font-weight: 600; font-size: 0.9rem; color: rgba(0,0,0,.7); }
+.fotos-empty  { color: rgba(0,0,0,.4); font-size: 0.85rem; margin: 0; }
+
+.fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+}
+
+.foto-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+
+.foto-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.foto-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+
+  &:hover { background: #c62828; }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.card-footer { display: flex; justify-content: flex-end; }
+
+.btn-guardar {
+  padding: 11px 32px;
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s;
+
+  &:hover:not(:disabled) { background: #283593; }
+  &:disabled { opacity: 0.5; cursor: default; }
+}

@@ -1,0 +1,31 @@
+<section class="page-section">
+  <h2 class="page-title">Mi Horario — Ciclo Vigente</h2>
+
+  @if (cargando) {
+    <p class="estado-msg">Cargando horario...</p>
+  } @else if (error) {
+    <p class="estado-msg error">{{ error }}</p>
+  } @else if (inscripciones().length === 0) {
+    <p class="estado-msg">No tienes cursos en el ciclo vigente.</p>
+  } @else {
+    <div class="horario-grid">
+      @for (dia of DIAS; track dia) {
+        <div class="dia-col">
+          <div class="dia-header">{{ dia }}</div>
+          <div class="dia-celdas">
+            @if (cursosDelDia(dia).length === 0) {
+              <div class="celda-vacia">–</div>
+            }
+            @for (c of cursosDelDia(dia); track c.codigoInscripcion) {
+              <div class="celda-curso">
+                <div class="celda-nombre">{{ c.nombreCurso }}</div>
+                <div class="celda-hora">{{ c.horaInicio }} – {{ c.horaFin }}</div>
+                <div class="celda-aula">Aula {{ c.aula }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

@@ -1,0 +1,49 @@
+<section class="page-section">
+  <h2 class="page-title">Mis Cursos</h2>
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando cursos...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (cursos().length === 0) {
+    <p class="estado-msg">No tienes cursos registrados.</p>
+  } @else {
+    @for (entry of cursosPorCiclo | keyvalue; track entry.key) {
+      <div class="ciclo-grupo">
+        <h3 class="ciclo-titulo">{{ entry.key }}</h3>
+        <div class="cursos-grid">
+          @for (curso of entry.value; track curso.codigoInscripcion) {
+            <div class="curso-card">
+              <div class="curso-nombre">{{ curso.nombreCurso }}</div>
+              <div class="curso-detalle">
+                <span class="tag">{{ curso.creditosCurso }} créditos</span>
+              </div>
+              <div class="curso-docente">
+                <span class="label">Docente:</span> {{ curso.nombreDocente || '—' }}
+              </div>
+              <div class="curso-horario">
+                <span class="label">Horario:</span>
+                {{ curso.dia }} {{ curso.horaInicio }}–{{ curso.horaFin }}
+                · Aula {{ curso.aula }}
+              </div>
+
+              <button
+                class="btn-asistencias"
+                type="button"
+                (click)="toggleAsistencias(curso.codigoAsignacion)">
+                {{ expandida() === curso.codigoAsignacion ? 'Ocultar asistencias' : 'Ver cantidad de asistencias' }}
+              </button>
+
+              @if (expandida() === curso.codigoAsignacion) {
+                <div class="asistencias-panel">
+                  <span class="asistencias-count">{{ asistenciasDelCurso(curso.codigoAsignacion) }}</span>
+                  <span class="asistencias-label">asistencia{{ asistenciasDelCurso(curso.codigoAsignacion) !== 1 ? 's' : '' }} registrada{{ asistenciasDelCurso(curso.codigoAsignacion) !== 1 ? 's' : '' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</section>

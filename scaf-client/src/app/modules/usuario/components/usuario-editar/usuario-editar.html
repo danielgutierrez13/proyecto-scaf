@@ -87,13 +87,132 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Foto de usuario</mat-label>
-          <input matInput type="text" formControlName="fotoUsuario" placeholder="URL o nombre de archivo">
-        </mat-form-field>
-
         <mat-checkbox class="check-control" formControlName="estado">Usuario activo</mat-checkbox>
       </div>
+
+      <!-- ── Sección de fotos de rostro (solo para estudiantes) ────────────── -->
+      @if (rolEsEstudiante()) {
+        <div class="webcam-section">
+          <h3 class="webcam-title">
+            <mat-icon>face</mat-icon>
+            Actualizar fotos de rostro
+          </h3>
+          <p class="webcam-hint">
+            Agrega hasta {{ MAX_FOTOS }} fotos nuevas del estudiante. Si ya tenía fotos registradas,
+            las nuevas se agregarán a las existentes.
+          </p>
+
+          <!-- Tabs de modo -->
+          <div class="modo-tabs">
+            <button
+              type="button"
+              class="tab-btn"
+              [class.activo]="modoRostro() === 'camara'"
+              (click)="seleccionarModo('camara')">
+              <mat-icon>videocam</mat-icon> Usar cámara
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              [class.activo]="modoRostro() === 'subir'"
+              (click)="seleccionarModo('subir')">
+              <mat-icon>upload_file</mat-icon> Subir fotos
+            </button>
+          </div>
+
+          <!-- MODO CÁMARA -->
+          @if (modoRostro() === 'camara') {
+            <div class="webcam-layout">
+              <div class="camera-box">
+                <video
+                  #videoElement
+                  class="camera-feed"
+                  [class.hidden]="!camaraActiva()"
+                  autoplay
+                  muted
+                  playsinline>
+                </video>
+                @if (!camaraActiva()) {
+                  <div class="camera-placeholder">
+                    <mat-icon>videocam_off</mat-icon>
+                    <span>Cámara inactiva</span>
+                  </div>
+                }
+                <canvas #canvasElement class="hidden"></canvas>
+
+                <div class="camera-controls">
+                  @if (!camaraActiva()) {
+                    <button mat-flat-button type="button" (click)="iniciarCamara()">
+                      <mat-icon>videocam</mat-icon> Activar cámara
+                    </button>
+                  } @else {
+                    <button mat-stroked-button type="button" color="warn" (click)="detenerCamara()">
+                      <mat-icon>videocam_off</mat-icon> Detener
+                    </button>
+                    <button
+                      mat-flat-button
+                      type="button"
+                      [disabled]="fotosCapturadas().length >= MAX_FOTOS"
+                      (click)="capturarFoto()">
+                      <mat-icon>photo_camera</mat-icon>
+                      Capturar ({{ fotosCapturadas().length }}/{{ MAX_FOTOS }})
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="fotos-grid">
+                @for (foto of fotosCapturadas(); track $index) {
+                  <div class="foto-preview">
+                    <img [src]="foto" alt="Foto {{ $index + 1 }}" />
+                    <button mat-icon-button type="button" class="foto-delete" (click)="eliminarFoto($index)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <p class="fotos-empty">No hay fotos capturadas aún.</p>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- MODO SUBIR -->
+          @if (modoRostro() === 'subir') {
+            <input
+              #archivoInput
+              type="file"
+              accept="image/*"
+              multiple
+              class="hidden"
+              (change)="onArchivosSeleccionados($event)"
+            >
+
+            <div class="subir-layout">
+              <div class="drop-zone" (click)="abrirSelector()">
+                <mat-icon class="drop-icon">add_photo_alternate</mat-icon>
+                <p class="drop-texto">Haz clic para seleccionar fotos</p>
+                <p class="drop-sub">JPG, PNG, WEBP · máx. {{ MAX_FOTOS }} imágenes</p>
+                <button mat-stroked-button type="button" (click)="$event.stopPropagation(); abrirSelector()">
+                  Seleccionar archivos
+                </button>
+              </div>
+
+              @if (fotosCapturadas().length > 0) {
+                <div class="fotos-grid">
+                  @for (foto of fotosCapturadas(); track $index) {
+                    <div class="foto-preview">
+                      <img [src]="foto" alt="Foto {{ $index + 1 }}" />
+                      <button mat-icon-button type="button" class="foto-delete" (click)="eliminarFoto($index)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
 
       <div class="form-actions">
         <a mat-stroked-button routerLink="/layout/usuarios">Cancelar</a>

@@ -56,11 +56,18 @@ export class DocenteCursoDetalleComponent implements OnInit {
   protected async iniciarCamara(): Promise<void> {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = this.videoRef()?.nativeElement;
-      if (video) { video.srcObject = this.stream; await video.play(); }
-      this.camaraActiva.set(true);
       this.resultado.set(null);
       this.error.set(null);
+      this.camaraActiva.set(true);
+
+      // Esperar al siguiente ciclo para que Angular renderice el <video>
+      setTimeout(() => {
+        const video = this.videoRef()?.nativeElement;
+        if (video && this.stream) {
+          video.srcObject = this.stream;
+          video.play().catch(() => {});
+        }
+      }, 0);
     } catch {
       this.error.set('No se pudo acceder a la cámara. Verifica los permisos del navegador.');
     }
@@ -92,8 +99,8 @@ export class DocenteCursoDetalleComponent implements OnInit {
     this.asistenciaService.reconocer(codigoAsignacion, imagenBase64).subscribe({
       next: (res) => {
         this.resultado.set(
-          res.estado === 'REGISTRADO'
-            ? `✅ ${res.nombreEstudiante} — ${res.horaRegistro}`
+          res.estado === 'RECONOCIDO'
+            ? `✅ Asistencia Registrada — ${res.nombreEstudiante}`
             : `❌ ${res.mensaje}`
         );
         this.escaneando.set(false);

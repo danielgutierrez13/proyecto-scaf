@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AsignacionResponse } from '../../../../core/models/asignacion.model';
-import { AsistenciaService } from '../../../asistencia/service/asistencia.service';
+import { AsistenteHoy, AsistenciaService } from '../../../asistencia/service/asistencia.service';
 import { DocenteService } from '../../service/docente.service';
 
 @Component({
@@ -27,12 +27,14 @@ export class DocenteCursoDetalleComponent implements OnInit {
   private readonly videoRef  = viewChild<ElementRef<HTMLVideoElement>>('videoElement');
   private readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvasElement');
 
-  protected readonly curso      = signal<AsignacionResponse | null>(null);
-  protected readonly cargando   = signal(true);
-  protected readonly error      = signal<string | null>(null);
-  protected readonly camaraActiva = signal(false);
-  protected readonly escaneando   = signal(false);
-  protected readonly resultado    = signal<string | null>(null);
+  protected readonly curso         = signal<AsignacionResponse | null>(null);
+  protected readonly cargando      = signal(true);
+  protected readonly error         = signal<string | null>(null);
+  protected readonly camaraActiva  = signal(false);
+  protected readonly escaneando    = signal(false);
+  protected readonly resultado     = signal<string | null>(null);
+  protected readonly resultadoExito = signal(false);
+  protected readonly asistentesHoy = signal<AsistenteHoy[]>([]);
 
   private stream: MediaStream | null = null;
 
@@ -43,6 +45,7 @@ export class DocenteCursoDetalleComponent implements OnInit {
       next: (data) => {
         this.curso.set(data);
         this.cargando.set(false);
+        this.cargarAsistentesHoy(codigoAsignacion);
       },
       error: (err) => {
         this.error.set(`Error ${err?.status ?? ''}: No se pudo cargar el curso.`);
@@ -73,6 +76,12 @@ export class DocenteCursoDetalleComponent implements OnInit {
     }
   }
 
+  private cargarAsistentesHoy(codigoAsignacion: number): void {
+    this.asistenciaService.asistentesHoy(codigoAsignacion).subscribe({
+      next: (data) => this.asistentesHoy.set(data),
+    });
+  }
+
   protected cerrarCamara(): void {
     this.stream?.getTracks().forEach(t => t.stop());
     this.stream = null;
@@ -98,11 +107,14 @@ export class DocenteCursoDetalleComponent implements OnInit {
 
     this.asistenciaService.reconocer(codigoAsignacion, imagenBase64).subscribe({
       next: (res) => {
+        const exito = res.estado === 'RECONOCIDO';
+        this.resultadoExito.set(exito);
         this.resultado.set(
-          res.estado === 'RECONOCIDO'
+          exito
             ? `✅ Asistencia Registrada — ${res.nombreEstudiante}`
             : `❌ ${res.mensaje}`
         );
+        if (exito) this.cargarAsistentesHoy(codigoAsignacion);
         this.escaneando.set(false);
       },
       error: () => {

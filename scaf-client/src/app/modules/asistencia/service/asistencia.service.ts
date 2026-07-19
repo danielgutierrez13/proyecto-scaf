@@ -10,6 +10,13 @@ export interface ReconocimientoResponse {
   horaRegistro?: string;
 }
 
+export interface AsistenteHoy {
+  codigoEstudiante:   number;
+  nombreEstudiante:   string;
+  codigoUniversitario: string;
+  horaIngreso:        string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AsistenciaService {
   private readonly http = inject(HttpClient);
@@ -20,5 +27,9 @@ export class AsistenciaService {
       codigoAsignacion,
       imagenBase64,
     });
+  }
+
+  asistentesHoy(codigoAsignacion: number): Observable<AsistenteHoy[]> {
+    return this.http.get<AsistenteHoy[]>(`${this.apiUrl}/asignacion/${codigoAsignacion}/hoy`);
   }
 }

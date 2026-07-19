@@ -86,13 +86,35 @@
               </div>
 
               @if (resultado()) {
-                <div class="resultado" [class.exito]="resultado()!.startsWith('✅')">
+                <div class="resultado" [class.exito]="resultadoExito()">
                   {{ resultado() }}
                 </div>
               }
             </div>
           </div>
         }
+
+        <!-- Lista de asistentes del día -->
+        <div class="asistentes-hoy">
+          <h3 class="asistentes-titulo">
+            Asistentes hoy
+            <span class="asistentes-count">{{ asistentesHoy().length }}</span>
+          </h3>
+
+          @if (asistentesHoy().length === 0) {
+            <p class="asistentes-vacio">Ningún estudiante ha registrado asistencia todavía.</p>
+          } @else {
+            <div class="asistentes-tabla">
+              @for (a of asistentesHoy(); track a.codigoEstudiante) {
+                <div class="asistente-fila">
+                  <span class="asistente-nombre">{{ a.nombreEstudiante }}</span>
+                  <span class="asistente-codigo">{{ a.codigoUniversitario }}</span>
+                  <span class="asistente-hora">{{ a.horaIngreso }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
       </section>
 
     </div>

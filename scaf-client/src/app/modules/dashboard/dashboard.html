@@ -1,0 +1,37 @@
+<section class="dashboard-page">
+  <div class="dash-header">
+    <h2 class="dash-title">Dashboard</h2>
+    @if (stats(); as s) {
+      <span class="ciclo-badge">Ciclo vigente: {{ s.cicloVigente }}</span>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando estadísticas...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (stats(); as s) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">👨‍🎓</span>
+        <span class="stat-valor">{{ s.totalEstudiantes }}</span>
+        <span class="stat-label">Estudiantes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">👨‍🏫</span>
+        <span class="stat-valor">{{ s.totalDocentes }}</span>
+        <span class="stat-label">Docentes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📚</span>
+        <span class="stat-valor">{{ s.totalCursos }}</span>
+        <span class="stat-label">Cursos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📋</span>
+        <span class="stat-valor">{{ s.asignacionesVigentes }}</span>
+        <span class="stat-label">Asignaciones vigentes</span>
+      </div>
+    </div>
+  }
+</section>

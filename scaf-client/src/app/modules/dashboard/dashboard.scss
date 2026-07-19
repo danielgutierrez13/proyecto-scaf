@@ -1,0 +1,56 @@
+.dashboard-page { display: grid; gap: 24px; }
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dash-title { margin: 0; font-size: 1.4rem; font-weight: 600; color: #172033; }
+
+.ciclo-badge {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.estado-msg { color: rgba(0,0,0,.55); &.error { color: #c62828; } }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-top: 4px solid #1565c0;
+  text-align: center;
+}
+
+.stat-icon { font-size: 2rem; }
+
+.stat-valor {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #1565c0;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: rgba(0,0,0,.55);
+  font-weight: 500;
+}

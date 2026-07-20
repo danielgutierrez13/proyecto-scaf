@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
 import { RolRequest, RolResponse } from '../../../core/models/rol.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RolService {
-  private readonly apiUrl = 'http://localhost:9091/api/roles';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/roles`;
 
   constructor(private readonly http: HttpClient) {}
 

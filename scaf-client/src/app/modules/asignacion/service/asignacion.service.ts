@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { AsignacionRequest, AsignacionResponse } from '../../../core/models/asignacion.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AsignacionService {
-  private readonly apiUrl = 'http://localhost:9091/api/asignaciones';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/asignaciones`;
 
   constructor(private readonly http: HttpClient) {}
 

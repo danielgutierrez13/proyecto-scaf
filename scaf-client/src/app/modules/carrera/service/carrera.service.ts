@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { CarreraRequest, CarreraResponse } from '../../../core/models/carrera.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarreraService {
-  private readonly apiUrl = 'http://localhost:9091/api/carreras';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/carreras`;
 
   constructor(private readonly http: HttpClient) {}
 

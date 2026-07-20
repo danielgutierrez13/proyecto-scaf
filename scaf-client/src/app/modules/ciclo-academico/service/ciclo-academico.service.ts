@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { CicloAcademicoRequest, CicloAcademicoResponse } from '../../../core/models/ciclo-academico.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CicloAcademicoService {
-  private readonly apiUrl = 'http://localhost:9091/api/cicloAcademico';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/cicloAcademico`;
 
   constructor(private readonly http: HttpClient) {}
 

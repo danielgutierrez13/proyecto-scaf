@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:scaf-client": "node dist/scaf-client/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -24,7 +23,8 @@
     "@angular/ssr": "^21.2.8",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.2"
   },
   "devDependencies": {
     "@angular/build": "^21.2.8",

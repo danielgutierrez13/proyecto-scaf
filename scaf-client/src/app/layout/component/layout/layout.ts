@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -19,13 +19,24 @@ export class Layout {
   private readonly authService = inject(AuthService);
   private readonly router      = inject(Router);
 
+  /** Estado del menu lateral en pantallas pequenas (drawer). */
+  protected readonly menuAbierto = signal(false);
+
+  protected alternarMenu(): void {
+    this.menuAbierto.update((abierto) => !abierto);
+  }
+
+  protected cerrarMenu(): void {
+    this.menuAbierto.set(false);
+  }
+
   protected cerrarSesion(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
   protected readonly menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'IN', route: '/layout' },
+    { label: 'Dashboard', icon: 'IN', route: '/layout/dashboard' },
     {
       label: 'Usuarios',
       icon: 'US',
@@ -46,5 +57,6 @@ export class Layout {
         { label: 'Inscripciones', icon: 'S5', route: '/layout/inscripciones' },
       ],
     },
+    { label: 'Reportes', icon: 'RE', route: '/layout/reportes' },
   ];
 }

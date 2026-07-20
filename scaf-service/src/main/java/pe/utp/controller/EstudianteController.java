@@ -70,10 +70,11 @@ public class EstudianteController {
                 .toList();
     }
 
-    /** Resumen de asistencias por curso del estudiante. */
+    /** Resumen de asistencias por curso del estudiante con porcentaje. */
     @GetMapping("/{codigoEstudiante}/asistencias")
     @ResponseStatus(HttpStatus.OK)
     public List<AsistenciaResumenDto> misAsistencias(@PathVariable Long codigoEstudiante) {
+        final int SESIONES_POR_CICLO = 18;
         var todas = asistenciaRepository.findByUsuario_CodigoUsusario(codigoEstudiante);
         return todas.stream()
                 .collect(Collectors.groupingBy(
@@ -81,7 +82,9 @@ public class EstudianteController {
                 ))
                 .entrySet().stream()
                 .map(entry -> {
-                    var asignacion = entry.getValue().get(0).getAsignacion();
+                    var asignacion   = entry.getValue().get(0).getAsignacion();
+                    long asistencias = entry.getValue().size();
+                    int porcentaje   = (int) Math.min(100, Math.round((asistencias * 100.0) / SESIONES_POR_CICLO));
                     return new AsistenciaResumenDto(
                             asignacion.getCodigoAsignacion(),
                             asignacion.getCurso().getNombre(),
@@ -89,7 +92,9 @@ public class EstudianteController {
                             asignacion.getHorario().getHoraInicio(),
                             asignacion.getHorario().getHoraFin(),
                             asignacion.getHorario().getAula(),
-                            entry.getValue().size()
+                            asistencias,
+                            SESIONES_POR_CICLO,
+                            porcentaje
                     );
                 })
                 .toList();

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 
 import { HorarioResponse } from '../../../../core/models/horario.model';
 import { HorarioService } from '../../service/horario.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-horario-list',
@@ -32,17 +33,19 @@ export class HorarioListComponent implements OnInit {
     this.cargando.set(true);
     this.error.set(null);
 
-    this.horarioService.listar(page, this.pageSize).subscribe({
+    this.horarioService.listar(page, this.pageSize)
+      .pipe(
+        finalize(() => this.cargando.set(false))
+      )
+      .subscribe({
       next: (response) => {
         this.horarios.set(response.lista ?? []);
         this.totalItems.set(response.totalItems ?? 0);
         this.totalPaginas.set(response.totalPaginas ?? 0);
         this.paginaActual.set(response.numeroPagina ?? page);
-        this.cargando.set(false);
       },
       error: () => {
         this.error.set('No se pudo cargar la lista de horarios.');
-        this.cargando.set(false);
       },
     });
   }

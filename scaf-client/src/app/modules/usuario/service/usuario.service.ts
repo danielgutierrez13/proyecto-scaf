@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
 import { UsuarioRequest, UsuarioResponse } from '../../../core/models/usuario.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
-  private readonly apiUrl = 'http://localhost:9091/api/usuarios';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/usuarios`;
 
   constructor(private readonly http: HttpClient) {}
 

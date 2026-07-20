@@ -1,3 +1,5 @@
+@use '../../../../layout/shell-responsive' as shell;
+
 .shell {
   height: 100dvh;
   max-height: 100dvh;
@@ -134,3 +136,5 @@
   padding: 28px;
   background: #eef3fb;
 }
+
+@include shell.shell-responsive;

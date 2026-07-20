@@ -93,8 +93,10 @@
 }
 
 .face-guide-circle {
-  width: 200px;
-  height: 260px;
+  // Escala con el ancho del video para que la guia siga encuadrando el rostro
+  // en pantallas angostas, sin pasarse del tamano original en escritorio.
+  width: min(200px, 55vw);
+  height: min(260px, 72vw);
   border: 3px dashed rgba(255, 255, 255, 0.7);
   border-radius: 50%;
   box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.25);

@@ -1,4 +1,11 @@
-<div class="shell">
+<div class="shell" [class.menu-abierto]="menuAbierto()">
+  <button class="menu-toggle" type="button" (click)="alternarMenu()"
+          [attr.aria-expanded]="menuAbierto()" aria-label="Abrir menu de navegacion">
+    &#9776;
+  </button>
+
+  <div class="backdrop" (click)="cerrarMenu()"></div>
+
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">SC</div>
@@ -20,7 +27,7 @@
 
             <div class="submenu">
               @for (child of item.children ?? []; track child.label) {
-                <a [routerLink]="child.route ?? []" routerLinkActive="active">
+                <a [routerLink]="child.route ?? []" routerLinkActive="active" (click)="cerrarMenu()">
                   <span class="nav-icon small">{{ child.icon }}</span>
                   <span>{{ child.label }}</span>
                 </a>
@@ -28,7 +35,7 @@
             </div>
           </details>
         } @else {
-          <a class="nav-link" [routerLink]="item.route ?? []" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="item.route ?? []" routerLinkActive="active" (click)="cerrarMenu()">
             <span class="nav-icon">{{ item.icon }}</span>
             <span>{{ item.label }}</span>
           </a>

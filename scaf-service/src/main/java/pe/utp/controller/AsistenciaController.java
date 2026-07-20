@@ -20,6 +20,7 @@ import pe.utp.service.AsistenciaService;
 import pe.utp.service.RostroService;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -118,9 +119,9 @@ public class AsistenciaController {
         }
 
         // 2. Validar que hoy sea el día de la clase
-        String diaHoy     = DIAS_ES.get(LocalDate.now().getDayOfWeek());
-        String diaClase   = asignacion.getHorario().getDia();
-        if (!diaHoy.equalsIgnoreCase(diaClase)) {
+        String diaHoy   = DIAS_ES.get(LocalDate.now().getDayOfWeek());
+        String diaClase = asignacion.getHorario().getDia();
+        if (!sinAcentos(diaHoy).equalsIgnoreCase(sinAcentos(diaClase))) {
             return new ReconocimientoResponseDto(
                     "NO_ES_DIA_DE_CLASE",
                     "Hoy no corresponde a este curso. La clase es los " + diaClase + ".",
@@ -186,5 +187,12 @@ public class AsistenciaController {
                 estudiante.getNombres() + " " + estudiante.getApellidos(),
                 horaIngreso
         );
+    }
+
+    /** Elimina acentos/diacríticos para comparar días sin importar tildes. */
+    private static String sinAcentos(String s) {
+        if (s == null) return "";
+        return Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 }

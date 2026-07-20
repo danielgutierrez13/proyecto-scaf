@@ -35,10 +35,32 @@
               </button>
 
               @if (expandida() === curso.codigoAsignacion) {
-                <div class="asistencias-panel">
-                  <span class="asistencias-count">{{ asistenciasDelCurso(curso.codigoAsignacion) }}</span>
-                  <span class="asistencias-label">asistencia{{ asistenciasDelCurso(curso.codigoAsignacion) !== 1 ? 's' : '' }} registrada{{ asistenciasDelCurso(curso.codigoAsignacion) !== 1 ? 's' : '' }}</span>
-                </div>
+                @if (resumenAsistencia(curso.codigoAsignacion); as r) {
+                  <div class="asistencias-panel">
+                    <div class="asistencias-header">
+                      <span class="asistencias-count">{{ r.totalAsistencias }}</span>
+                      <span class="asistencias-label">de {{ r.totalSesiones }} sesiones</span>
+                      <span class="asistencias-pct" [class.pct-riesgo]="r.porcentaje < 70">
+                        {{ r.porcentaje }}%
+                      </span>
+                    </div>
+                    <div class="progress-bar">
+                      <div
+                        class="progress-fill"
+                        [class.fill-riesgo]="r.porcentaje < 70"
+                        [style.width.%]="r.porcentaje">
+                      </div>
+                    </div>
+                    <p class="asistencias-aviso" [class.aviso-riesgo]="r.porcentaje < 70">
+                      {{ r.porcentaje >= 70 ? '✅ Cumples con el mínimo del 70%' : '⚠️ Estás por debajo del mínimo requerido' }}
+                    </p>
+                  </div>
+                } @else {
+                  <div class="asistencias-panel">
+                    <span class="asistencias-count">0</span>
+                    <span class="asistencias-label">asistencias registradas</span>
+                  </div>
+                }
               }
             </div>
           }

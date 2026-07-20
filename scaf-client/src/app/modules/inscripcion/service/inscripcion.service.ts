@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { InscripcionRequest, InscripcionResponse } from '../../../core/models/inscripcion.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InscripcionService {
-  private readonly apiUrl = 'http://localhost:9091/api/inscripciones';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/inscripciones`;
 
   constructor(private readonly http: HttpClient) {}
 

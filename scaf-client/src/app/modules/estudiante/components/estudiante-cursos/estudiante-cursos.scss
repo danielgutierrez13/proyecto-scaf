@@ -64,13 +64,18 @@
 }
 
 .asistencias-panel {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 10px 14px;
+  padding: 12px 14px;
   background: #e3f2fd;
   border-radius: 8px;
   border-left: 4px solid #1565c0;
+  display: grid;
+  gap: 8px;
+}
+
+.asistencias-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .asistencias-count {
@@ -83,4 +88,34 @@
 .asistencias-label {
   font-size: 0.85rem;
   color: #1565c0;
+  flex: 1;
+}
+
+.asistencias-pct {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1565c0;
+  &.pct-riesgo { color: #e65100; }
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(0,0,0,.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #1565c0;
+  border-radius: 4px;
+  transition: width .4s ease;
+  &.fill-riesgo { background: #e65100; }
+}
+
+.asistencias-aviso {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #1565c0;
+  &.aviso-riesgo { color: #e65100; }
 }

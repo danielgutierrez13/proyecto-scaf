@@ -84,7 +84,7 @@ export class UsuarioCrearComponent implements OnInit {
   private stream: MediaStream | null = null;
   protected readonly camaraActiva = signal(false);
   protected readonly fotosCapturadas = signal<string[]>([]);
-  protected readonly MAX_FOTOS = 5;
+  protected readonly MAX_FOTOS = 10;
 
   ngOnInit(): void {
     this.cargarCatalogos();

@@ -22,6 +22,7 @@ import { EstudianteLayoutComponent } from './modules/estudiante/components/estud
 import { EstudianteCursosComponent } from './modules/estudiante/components/estudiante-cursos/estudiante-cursos';
 import { EstudianteHorarioComponent } from './modules/estudiante/components/estudiante-horario/estudiante-horario';
 import { EstudianteAsistenciasComponent } from './modules/estudiante/components/estudiante-asistencias/estudiante-asistencias';
+import { EstudiantePerfilComponent } from './modules/estudiante/components/estudiante-perfil/estudiante-perfil';
 import { RegistroRostroComponent } from './modules/estudiante/components/registro-rostro/registro-rostro';
 import { HorarioCrearComponent } from './modules/horario/components/horario-crear/horario-crear';
 import { HorarioEditarComponent } from './modules/horario/components/horario-editar/horario-editar';
@@ -35,6 +36,8 @@ import { RolListComponent } from './modules/rol/components/rol-list/rol-list';
 import { UsuarioCrearComponent } from './modules/usuario/components/usuario-crear/usuario-crear';
 import { UsuarioEditarComponent } from './modules/usuario/components/usuario-editar/usuario-editar';
 import { UsuarioListComponent } from './modules/usuario/components/usuario-list/usuario-list';
+import { DashboardComponent } from './modules/dashboard/dashboard';
+import { ReportesComponent } from './modules/reportes/reportes';
 import { Login } from './security/component/login/login';
 
 export const routes: Routes = [
@@ -47,7 +50,8 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [authGuard, rolGuard('ADMINISTRADOR')],
     children: [
-      { path: '', redirectTo: 'carreras', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'carreras', component: CarreraGestionComponent },
       { path: 'carreras/crear', component: CarreraCrearComponent },
       { path: 'carreras/editar/:id', component: CarreraEditarComponent },
@@ -72,6 +76,7 @@ export const routes: Routes = [
       { path: 'inscripciones', component: InscripcionListComponent },
       { path: 'inscripciones/crear', component: InscripcionCrearComponent },
       { path: 'inscripciones/editar/:id', component: InscripcionEditarComponent },
+      { path: 'reportes', component: ReportesComponent },
     ],
   },
 
@@ -85,6 +90,7 @@ export const routes: Routes = [
       { path: 'cursos', component: EstudianteCursosComponent },
       { path: 'horario', component: EstudianteHorarioComponent },
       { path: 'asistencias', component: EstudianteAsistenciasComponent },
+      { path: 'perfil', component: EstudiantePerfilComponent },
     ],
   },
 

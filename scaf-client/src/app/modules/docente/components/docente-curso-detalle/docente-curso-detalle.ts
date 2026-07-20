@@ -63,14 +63,18 @@ export class DocenteCursoDetalleComponent implements OnInit {
       this.error.set(null);
       this.camaraActiva.set(true);
 
-      // Esperar al siguiente ciclo para que Angular renderice el <video>
+      // DroidCam y cámaras virtuales necesitan un tick más largo para inicializar
       setTimeout(() => {
         const video = this.videoRef()?.nativeElement;
         if (video && this.stream) {
           video.srcObject = this.stream;
-          video.play().catch(() => {});
+          video.play().catch((err) => {
+            console.warn('Autoplay bloqueado, reintentando...', err);
+            // Segundo intento tras interacción del usuario
+            video.addEventListener('click', () => video.play(), { once: true });
+          });
         }
-      }, 0);
+      }, 150);
     } catch {
       this.error.set('No se pudo acceder a la cámara. Verifica los permisos del navegador.');
     }

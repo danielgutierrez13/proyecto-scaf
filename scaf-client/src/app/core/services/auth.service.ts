@@ -4,6 +4,7 @@ import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { SessionUser } from '../models/session-user.model';
+import { environment } from '../../../environments/environment';
 
 const SESSION_KEY = 'scaf_user';
 const TOKEN_KEY   = 'scaf_token';
@@ -16,7 +17,7 @@ interface LoginResponse extends SessionUser {
 export class AuthService {
   private readonly http       = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly apiUrl     = 'http://localhost:9091/api/auth';
+  private readonly apiUrl     = `${environment.apiBaseUrl}/api/auth`;
 
   private readonly _usuario = signal<SessionUser | null>(this.cargarSesion());
 

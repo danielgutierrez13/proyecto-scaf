@@ -29,4 +29,9 @@ jwt:
 faces:
   storage:
     path: ./faces
-    url: http://localhost:9091/faces
+    # Al exponer por tunel, arranca con: --faces.storage.url=https://<tunel>/faces
+    url: ${PUBLIC_BASE_URL:http://localhost:9091}/faces
+
+cors:
+  # Origenes permitidos. Se puede sobreescribir con la variable CORS_ORIGINS.
+  allowed-origins: ${CORS_ORIGINS:http://localhost:4200,https://proyecto-scaf-utp.vercel.app}

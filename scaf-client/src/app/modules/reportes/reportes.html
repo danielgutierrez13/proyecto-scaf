@@ -1,0 +1,73 @@
+<section class="page-section">
+  <div class="page-header">
+    <h2 class="page-title">Reportes de Asistencia</h2>
+    <input
+      class="filtro-input"
+      type="text"
+      placeholder="Buscar por curso, docente o día..."
+      [value]="filtro()"
+      (input)="filtro.set($any($event.target).value)" />
+  </div>
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando reportes...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (cursosFiltrados().length === 0) {
+    <p class="estado-msg">No hay datos de asistencia disponibles.</p>
+  } @else {
+    <div class="cursos-lista">
+      @for (curso of cursosFiltrados(); track curso.codigoAsignacion) {
+        <div class="curso-bloque">
+          <div class="curso-header" (click)="toggle(curso.codigoAsignacion)">
+            <div class="curso-info">
+              <span class="curso-nombre">{{ curso.nombreCurso }}</span>
+              <span class="curso-meta">{{ curso.dia }} · {{ curso.horaInicio }}–{{ curso.horaFin }} · Aula {{ curso.aula }}</span>
+              <span class="curso-docente">Docente: {{ curso.nombreDocente }}</span>
+            </div>
+            <div class="curso-stats">
+              <div class="stat-pill">
+                <span class="stat-val">{{ curso.estudiantes.length }}</span>
+                <span class="stat-lbl">estudiantes</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-val">{{ promedioAsistencia(curso) }}%</span>
+                <span class="stat-lbl">promedio</span>
+              </div>
+              @if (estudiantesEnRiesgo(curso) > 0) {
+                <div class="stat-pill riesgo">
+                  <span class="stat-val">{{ estudiantesEnRiesgo(curso) }}</span>
+                  <span class="stat-lbl">en riesgo</span>
+                </div>
+              }
+              <span class="toggle-icon">{{ expandido() === curso.codigoAsignacion ? '▲' : '▼' }}</span>
+            </div>
+          </div>
+
+          @if (expandido() === curso.codigoAsignacion) {
+            <div class="estudiantes-tabla">
+              <div class="tabla-header">
+                <span>Estudiante</span>
+                <span>Código</span>
+                <span>Asistencias</span>
+                <span>Porcentaje</span>
+                <span>Estado</span>
+              </div>
+              @for (est of curso.estudiantes; track est.codigoEstudiante) {
+                <div class="tabla-fila" [class.fila-riesgo]="est.porcentaje < 70">
+                  <span class="est-nombre">{{ est.nombre }}</span>
+                  <span class="est-codigo">{{ est.codigoUniversitario }}</span>
+                  <span class="est-asist">{{ est.totalAsistencias }} / {{ est.totalSesiones }}</span>
+                  <span class="est-pct" [class.pct-riesgo]="est.porcentaje < 70">{{ est.porcentaje }}%</span>
+                  <span class="est-estado">
+                    {{ est.porcentaje >= 70 ? '✅ Regular' : '⚠️ En riesgo' }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>

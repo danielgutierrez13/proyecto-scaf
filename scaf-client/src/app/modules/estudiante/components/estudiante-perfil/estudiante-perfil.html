@@ -1,0 +1,45 @@
+<section class="page-section">
+  <h2 class="page-title">Mi Perfil</h2>
+
+  @if (cargando()) {
+    <p class="estado-msg">Cargando perfil...</p>
+  } @else if (error()) {
+    <p class="estado-msg error">{{ error() }}</p>
+  } @else if (perfil(); as p) {
+    <div class="perfil-card">
+      <div class="perfil-avatar">
+        {{ p.nombres.charAt(0) }}{{ p.apellidos.charAt(0) }}
+      </div>
+
+      <div class="perfil-info">
+        <h3 class="perfil-nombre">{{ p.nombres }} {{ p.apellidos }}</h3>
+        <span class="perfil-rol">{{ p.nombreRol }}</span>
+      </div>
+
+      <div class="perfil-grid">
+        <div class="perfil-campo">
+          <span class="campo-label">Código universitario</span>
+          <span class="campo-valor">{{ p.codigoUniversitario }}</span>
+        </div>
+        <div class="perfil-campo">
+          <span class="campo-label">Correo institucional</span>
+          <span class="campo-valor">{{ p.correoInstitucional }}</span>
+        </div>
+        <div class="perfil-campo">
+          <span class="campo-label">Teléfono</span>
+          <span class="campo-valor">{{ p.telefono || '—' }}</span>
+        </div>
+        <div class="perfil-campo">
+          <span class="campo-label">Carrera</span>
+          <span class="campo-valor">{{ p.nombreCarrera || '—' }}</span>
+        </div>
+        <div class="perfil-campo">
+          <span class="campo-label">Estado</span>
+          <span class="campo-valor" [class.activo]="p.estado">
+            {{ p.estado ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  }
+</section>

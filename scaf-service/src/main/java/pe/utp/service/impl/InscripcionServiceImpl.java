@@ -16,6 +16,7 @@ import pe.utp.repository.model.Usuario;
 import pe.utp.service.InscripcionService;
 import pe.utp.service.exception.CodigoError;
 import pe.utp.service.exception.ScafException;
+import pe.utp.service.RostroService;
 import pe.utp.service.mapper.InscripcionMapper;
 
 @Service
@@ -26,6 +27,7 @@ public class InscripcionServiceImpl implements InscripcionService {
     private final UsuarioRepository usuarioRepository;
     private final AsignacionRepository asignacionRepository;
     private final InscripcionMapper inscripcionMapper;
+    private final RostroService rostroService;
 
     @Override
     public PaginateResponseDto<InscripcionResponseDto> listar(Pageable pageable) {
@@ -46,7 +48,10 @@ public class InscripcionServiceImpl implements InscripcionService {
     public InscripcionResponseDto crear(InscripcionRequestDto inscripcionRequestDto) {
         Inscripcion inscripcion = new Inscripcion();
         actualizarDatos(inscripcion, inscripcionRequestDto);
-        return inscripcionMapper.toResponseDto(inscripcionRepository.save(inscripcion));
+        InscripcionResponseDto creada = inscripcionMapper.toResponseDto(inscripcionRepository.save(inscripcion));
+        // El grupo de la asignacion cambio: el modelo de reconocimiento quedo obsoleto.
+        rostroService.invalidarModelos();
+        return creada;
     }
 
     @Override
@@ -54,7 +59,10 @@ public class InscripcionServiceImpl implements InscripcionService {
         Inscripcion inscripcionExistente = inscripcionRepository.findById(id)
                 .orElseThrow(() -> ScafException.of(CodigoError.INSCRIPCION_NO_ENCONTRADA));
         actualizarDatos(inscripcionExistente, inscripcionRequestDto);
-        return inscripcionMapper.toResponseDto(inscripcionRepository.save(inscripcionExistente));
+        InscripcionResponseDto actualizada =
+                inscripcionMapper.toResponseDto(inscripcionRepository.save(inscripcionExistente));
+        rostroService.invalidarModelos();
+        return actualizada;
     }
 
     @Override
@@ -63,6 +71,7 @@ public class InscripcionServiceImpl implements InscripcionService {
             throw ScafException.of(CodigoError.INSCRIPCION_NO_ENCONTRADA);
         }
         inscripcionRepository.deleteById(id);
+        rostroService.invalidarModelos();
     }
 
     private void actualizarDatos(Inscripcion inscripcion, InscripcionRequestDto requestDto) {

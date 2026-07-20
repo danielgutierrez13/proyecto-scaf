@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { CursoRequest, CursoResponse } from '../../../core/models/curso.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CursoService {
-  private readonly apiUrl = 'http://localhost:9091/api/cursos';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/cursos`;
 
   constructor(private readonly http: HttpClient) {}
 

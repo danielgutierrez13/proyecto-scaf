@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { HorarioRequest, HorarioResponse } from '../../../core/models/horario.model';
 import { PaginateResponse } from '../../../core/models/paginate-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HorarioService {
-  private readonly apiUrl = 'http://localhost:9091/api/horarios';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/horarios`;
 
   constructor(private readonly http: HttpClient) {}
 

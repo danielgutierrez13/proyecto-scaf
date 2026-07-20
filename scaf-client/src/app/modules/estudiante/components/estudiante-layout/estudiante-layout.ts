@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -29,6 +29,17 @@ export class EstudianteLayoutComponent implements OnInit {
         }
       },
     });
+  }
+
+  /** Estado del menu lateral en pantallas pequenas (drawer). */
+  protected readonly menuAbierto = signal(false);
+
+  protected alternarMenu(): void {
+    this.menuAbierto.update((abierto) => !abierto);
+  }
+
+  protected cerrarMenu(): void {
+    this.menuAbierto.set(false);
   }
 
   protected cerrarSesion(): void {

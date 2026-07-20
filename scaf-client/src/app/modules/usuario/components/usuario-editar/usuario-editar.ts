@@ -86,7 +86,7 @@ export class UsuarioEditarComponent implements OnInit {
   protected readonly modoRostro     = signal<'camara' | 'subir'>('camara');
   protected readonly camaraActiva   = signal(false);
   protected readonly fotosCapturadas = signal<string[]>([]);
-  protected readonly MAX_FOTOS = 5;
+  protected readonly MAX_FOTOS = 10;
   private stream: MediaStream | null = null;
 
   ngOnInit(): void {

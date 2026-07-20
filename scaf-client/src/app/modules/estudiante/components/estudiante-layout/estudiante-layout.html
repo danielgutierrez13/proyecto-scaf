@@ -1,4 +1,11 @@
-<div class="shell">
+<div class="shell" [class.menu-abierto]="menuAbierto()">
+  <button class="menu-toggle" type="button" (click)="alternarMenu()"
+          [attr.aria-expanded]="menuAbierto()" aria-label="Abrir menu de navegacion">
+    &#9776;
+  </button>
+
+  <div class="backdrop" (click)="cerrarMenu()"></div>
+
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">SC</div>
@@ -9,13 +16,17 @@
     </div>
 
     <nav class="nav">
-      <a class="nav-link" routerLink="cursos" routerLinkActive="active">
+      <a class="nav-link" routerLink="cursos" routerLinkActive="active" (click)="cerrarMenu()">
         <span class="nav-icon">📚</span>
         <span>Mis Cursos</span>
       </a>
-      <a class="nav-link" routerLink="horario" routerLinkActive="active">
+      <a class="nav-link" routerLink="horario" routerLinkActive="active" (click)="cerrarMenu()">
         <span class="nav-icon">🗓️</span>
         <span>Mi Horario</span>
+      </a>
+      <a class="nav-link" routerLink="perfil" routerLinkActive="active" (click)="cerrarMenu()">
+        <span class="nav-icon">👤</span>
+        <span>Mi Perfil</span>
       </a>
     </nav>
 

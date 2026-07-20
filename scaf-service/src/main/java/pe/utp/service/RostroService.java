@@ -27,7 +27,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
@@ -51,6 +53,30 @@ public class RostroService {
 
     /** Umbral LBPH: distancia < threshold = reconocido. */
     private static final double LBPH_THRESHOLD = 90.0;
+
+    /**
+     * Modelo LBPH ya entrenado para una asignacion, junto con la correspondencia
+     * etiqueta -> codigo de usuario. Se guardan los codigos y no las entidades
+     * para no arrastrar objetos JPA desconectados que podrian quedar obsoletos.
+     */
+    private record ModeloReconocimiento(LBPHFaceRecognizer recognizer, List<Long> codigosPorEtiqueta) {}
+
+    /**
+     * Cache de modelos por asignacion. Entrenar es la parte cara del
+     * reconocimiento, y antes ocurria en cada frame de la camara; ahora se hace
+     * una sola vez por asignacion y se reutiliza hasta que cambien los rostros.
+     */
+    private final Map<Long, ModeloReconocimiento> modelosPorAsignacion = new ConcurrentHashMap<>();
+
+    /**
+     * Descarta los modelos entrenados. Se invoca al registrar o eliminar
+     * rostros: un mismo estudiante puede pertenecer a varias asignaciones, asi
+     * que se limpian todas en lugar de intentar deducir cuales le afectan.
+     */
+    public void invalidarModelos() {
+        modelosPorAsignacion.clear();
+        log.info("Cache de modelos de reconocimiento invalidada");
+    }
 
     @PostConstruct
     public void init() throws IOException {
@@ -137,6 +163,9 @@ public class RostroService {
             usuarioRepository.save(usuario);
         }
 
+        // Los modelos entrenados ya no reflejan los rostros en disco.
+        if (guardados > 0) invalidarModelos();
+
         return guardados;
     }
 
@@ -149,12 +178,54 @@ public class RostroService {
      * @return el Usuario reconocido, o empty si no se identificó a nadie
      */
     public Optional<Usuario> reconocerEstudiante(Long codigoAsignacion, byte[] imagenBytes) {
+        // Reutiliza el modelo ya entrenado si existe; si no, lo entrena una vez.
+        ModeloReconocimiento modelo = modelosPorAsignacion.computeIfAbsent(
+                codigoAsignacion, this::entrenarModelo);
+        if (modelo == null) return Optional.empty();
+
+        // Decodifica y prepara la imagen capturada
+        Mat buf = new Mat(1, imagenBytes.length, CV_8UC1, new BytePointer(imagenBytes));
+        Mat capturada = imdecode(buf, 0); // escala de grises
+        if (capturada.empty()) return Optional.empty();
+
+        // Intentar recortar el rostro detectado; si no hay rostro, usar imagen completa
+        Mat roiCapturada = recortarRostro(capturada);
+
+        Mat capturadaResized = new Mat();
+        resize(roiCapturada, capturadaResized, new Size(100, 100));
+        equalizeHist(capturadaResized, capturadaResized);
+
+        int[] prediccion = {-1};
+        double[] confianza = {0.0};
+
+        // predict() sobre el objeto nativo no es seguro para hilos concurrentes,
+        // y ahora el modelo se comparte entre peticiones.
+        synchronized (modelo) {
+            modelo.recognizer().predict(capturadaResized, prediccion, confianza);
+        }
+
+        log.info("Reconocimiento: etiqueta={}, confianza={}", prediccion[0], confianza[0]);
+
+        if (prediccion[0] >= 0 && confianza[0] < LBPH_THRESHOLD
+                && prediccion[0] < modelo.codigosPorEtiqueta().size()) {
+            return usuarioRepository.findById(modelo.codigosPorEtiqueta().get(prediccion[0]));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Entrena el modelo LBPH con las fotos de todos los estudiantes inscritos en
+     * la asignacion. Devuelve null si no hay ninguna foto utilizable, para que
+     * el cache no guarde una entrada vacia y se reintente en la siguiente
+     * captura (por ejemplo, una vez que se registren los rostros).
+     */
+    private ModeloReconocimiento entrenarModelo(Long codigoAsignacion) {
         List<Inscripcion> inscripciones = inscripcionRepository.findByAsignacion_CodigoAsignacion(codigoAsignacion);
-        if (inscripciones.isEmpty()) return Optional.empty();
+        if (inscripciones.isEmpty()) return null;
 
         MatVector imagenes = new MatVector();
         List<Integer> etiquetas = new ArrayList<>();
-        List<Usuario> estudiantesPorEtiqueta = new ArrayList<>();
+        List<Long> codigosPorEtiqueta = new ArrayList<>();
 
         int etiqueta = 0;
         for (Inscripcion inscripcion : inscripciones) {
@@ -170,16 +241,18 @@ public class RostroService {
             for (File foto : fotos) {
                 Mat imagen = imread(foto.getAbsolutePath(), 0); // escala de grises
                 if (imagen.empty()) continue;
+                Mat roi = recortarRostro(imagen);
                 Mat resized = new Mat();
-                resize(imagen, resized, new Size(100, 100));
+                resize(roi, resized, new Size(100, 100));
+                equalizeHist(resized, resized);
                 imagenes.push_back(resized);
                 etiquetas.add(etiqueta);
             }
-            estudiantesPorEtiqueta.add(estudiante);
+            codigosPorEtiqueta.add(estudiante.getCodigoUsusario());
             etiqueta++;
         }
 
-        if (imagenes.size() == 0) return Optional.empty();
+        if (imagenes.size() == 0) return null;
 
         // Convierte lista de etiquetas a Mat
         Mat labelMat = new Mat(etiquetas.size(), 1, org.bytedeco.opencv.global.opencv_core.CV_32SC1);
@@ -190,25 +263,10 @@ public class RostroService {
         LBPHFaceRecognizer recognizer = LBPHFaceRecognizer.create();
         recognizer.train(imagenes, labelMat);
 
-        // Decodifica y prepara la imagen capturada
-        Mat buf = new Mat(1, imagenBytes.length, CV_8UC1, new BytePointer(imagenBytes));
-        Mat capturada = imdecode(buf, 0); // escala de grises
-        if (capturada.empty()) return Optional.empty();
+        log.info("Modelo entrenado para la asignacion {}: {} estudiantes, {} imagenes",
+                codigoAsignacion, codigosPorEtiqueta.size(), imagenes.size());
 
-        Mat capturadaResized = new Mat();
-        resize(capturada, capturadaResized, new Size(100, 100));
-
-        int[] prediccion = {-1};
-        double[] confianza = {0.0};
-        recognizer.predict(capturadaResized, prediccion, confianza);
-
-        log.info("Reconocimiento: etiqueta={}, confianza={}", prediccion[0], confianza[0]);
-
-        if (prediccion[0] >= 0 && confianza[0] < LBPH_THRESHOLD
-                && prediccion[0] < estudiantesPorEtiqueta.size()) {
-            return Optional.of(estudiantesPorEtiqueta.get(prediccion[0]));
-        }
-        return Optional.empty();
+        return new ModeloReconocimiento(recognizer, codigosPorEtiqueta);
     }
 
     /**
@@ -219,6 +277,31 @@ public class RostroService {
         if (!Files.exists(carpeta)) return false;
         File[] fotos = carpeta.toFile().listFiles((d, n) -> n.endsWith(".jpg"));
         return fotos != null && fotos.length > 0;
+    }
+
+    /**
+     * Detecta el rostro más grande en la imagen y retorna esa región recortada.
+     * Si no detecta ningún rostro, retorna la imagen original completa.
+     */
+    private Mat recortarRostro(Mat grayImg) {
+        Mat equalizado = new Mat();
+        equalizeHist(grayImg, equalizado);
+
+        RectVector rostros = new RectVector();
+        faceDetector.detectMultiScale(equalizado, rostros, 1.1, 3, 0,
+                new Size(30, 30), new Size());
+
+        if (rostros.size() == 0) return grayImg;
+
+        // Tomar el rostro más grande detectado
+        Rect mayor = rostros.get(0);
+        for (int i = 1; i < rostros.size(); i++) {
+            Rect r = rostros.get(i);
+            if (r.width() * r.height() > mayor.width() * mayor.height()) {
+                mayor = r;
+            }
+        }
+        return new Mat(grayImg, mayor);
     }
 
     /**
@@ -235,5 +318,7 @@ public class RostroService {
                     .map(Path::toFile)
                     .forEach(File::delete);
         }
+
+        invalidarModelos();
     }
 }

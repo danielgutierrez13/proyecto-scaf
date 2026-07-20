@@ -13,4 +13,6 @@ public class AsistenciaResumenDto {
     private String horaFin;
     private String aula;
     private long   totalAsistencias;
+    private int    totalSesiones;    // 18 sesiones por ciclo (1 vez/semana)
+    private int    porcentaje;       // (totalAsistencias / totalSesiones) * 100
 }

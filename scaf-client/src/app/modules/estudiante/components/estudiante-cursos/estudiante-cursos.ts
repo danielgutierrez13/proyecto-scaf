@@ -40,8 +40,8 @@ export class EstudianteCursosComponent implements OnInit {
     this.expandida.update(v => v === codigoAsignacion ? null : codigoAsignacion);
   }
 
-  protected asistenciasDelCurso(codigoAsignacion: number): number {
-    return this.asistencias().find(a => a.codigoAsignacion === codigoAsignacion)?.totalAsistencias ?? 0;
+  protected resumenAsistencia(codigoAsignacion: number): AsistenciaResumen | undefined {
+    return this.asistencias().find(a => a.codigoAsignacion === codigoAsignacion);
   }
 
   protected get cursosPorCiclo(): Map<string, InscripcionResponse[]> {

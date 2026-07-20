@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../usuario/service/usuario.service';
 
-const MAX_FOTOS = 5;
+const MAX_FOTOS = 10;
 
 type Modo = 'camara' | 'subir';
 
